@@ -1,59 +1,59 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #f0f6fc;
   --foreground: #0f172a;
-  --card: #ffffff;
-  --card-foreground: #0f172a;
-  --primary: #3b82f6;
+  --card: rgba(255, 255, 255, 0.85);
+  --card-border: rgba(14, 165, 233, 0.15); /* sky-500/15 */
+  --primary: #0ea5e9; /* sky-500 */
   --primary-foreground: #ffffff;
-  --accent: #f1f5f9;
-  --accent-foreground: #0f172a;
+  --accent: #f0f9ff;
   --border: #e2e8f0;
+  --muted: #475569;
+  --shadow: 0 20px 40px -15px rgba(14, 165, 233, 0.08), 0 1px 3px rgba(0, 0, 0, 0.01);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-border: var(--border);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #020617;
-    --foreground: #f8fafc;
-    --card: rgba(30, 41, 59, 0.7);
-    --card-foreground: #f8fafc;
-    --primary: #60a5fa;
-    --primary-foreground: #020617;
-    --accent: #1e293b;
-    --accent-foreground: #f8fafc;
-    --border: #334155;
-  }
+.dark {
+  --background: #090d16;
+  --foreground: #f1f5f9;
+  --card: rgba(15, 23, 42, 0.8);
+  --card-border: rgba(56, 189, 248, 0.1);
+  --primary: #38bdf8; /* sky-400 */
+  --primary-foreground: #090d16;
+  --accent: #0c4a6e;
+  --border: #1e293b;
+  --muted: #94a3b8;
+  --shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.4);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: 'Inter', system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  transition: background-color 0.4s ease, color 0.4s ease;
+  background-image: 
+    linear-gradient(135deg, #ffffff 0%, #e0f2fe 50%, #bae6fd 100%);
 }
 
-.glass {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+.dark body {
+  background-image: 
+    linear-gradient(135deg, #090d16 0%, #0c1e35 50%, #030712 100__);
 }
 
-.dark .glass {
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+/* Sophisticated card design with backdrop filter */
+.glass-card {
+  background: var(--card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--shadow);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, border-color 0.4s ease;
 }
 
+.glow-sky {
+  box-shadow: 0 0 25px rgba(14, 165, 233, 0.12), 0 20px 40px -15px rgba(14, 165, 233, 0.08);
+}
+.dark .glow-sky {
+  box-shadow: 0 0 25px rgba(56, 189, 248, 0.15), 0 20px 40px -15px rgba(0, 0, 0, 0.4);
+}
