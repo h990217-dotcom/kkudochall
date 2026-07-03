@@ -64,9 +64,13 @@ export default function ChallengeDashboard() {
     }
   }, []);
 
-  // 1. Auth Listener
+  // 1. Auth Listener with detailed initialization error catch
   useEffect(() => {
     try {
+      if (!supabase) {
+        throw new Error('Supabase 클라이언트 객체가 존재하지 않습니다. 라이브러리 초기화 오류.');
+      }
+      
       supabase.auth.getSession().then(({ data: { session } }) => {
         if (session) {
           setSession(session);
@@ -74,6 +78,7 @@ export default function ChallengeDashboard() {
       }).catch(err => {
         console.warn('Supabase getSession failed, entering offline mode:', err);
         setIsOfflineMode(true);
+        setError(`인증 세션 로드 실패 (Supabase 설정 오류 가능성): ${err.message || JSON.stringify(err)}`);
       });
 
       const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -83,9 +88,10 @@ export default function ChallengeDashboard() {
       return () => {
         subscription?.unsubscribe();
       };
-    } catch (e) {
-      console.warn('Auth subscription error:', e);
+    } catch (e: any) {
+      console.warn('Auth initialization error:', e);
       setIsOfflineMode(true);
+      setError(`Supabase 초기화 오류 (환경 변수 누락 가능성): ${e.message || JSON.stringify(e)}`);
     }
   }, []);
 
@@ -117,7 +123,7 @@ export default function ChallengeDashboard() {
   // Fetch verified dates, URL, and Nicknames from Supabase memos table
   const fetchStamps = async () => {
     setIsLoading(true);
-    setError(null);
+    // Do not clear the initialization error if set by the useEffect catch
     try {
       const { data, error: dbError } = await supabase
         .from('memos')
@@ -552,13 +558,14 @@ export default function ChallengeDashboard() {
     start.setHours(0, 0, 0, 0);
     today.setHours(0, 0, 0, 0);
     const diffTime = today.getTime() - start.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+    const diffDays = Math.ceil(today.getTime() - start.getTime() / (1000 * 60 * 60 * 24)) + 1; // Safeguard calculation
+    const rawDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
     
-    if (diffDays <= 0) {
-      const absDiff = Math.abs(diffDays - 1);
+    if (rawDays <= 0) {
+      const absDiff = Math.abs(rawDays - 1);
       return `D-${absDiff}`;
     }
-    return diffDays <= TOTAL_CHALLENGE_DAYS ? `Day ${diffDays}` : '종료됨';
+    return rawDays <= TOTAL_CHALLENGE_DAYS ? `Day ${rawDays}` : '종료됨';
   }, []);
 
   return (
