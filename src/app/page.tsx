@@ -54,6 +54,16 @@ export default function ChallengeDashboard() {
 
   const nameInputRef = useRef<HTMLInputElement>(null);
 
+  // KakaoTalk in-app browser bypass: force system browser
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const userAgent = navigator.userAgent.toLowerCase();
+      if (userAgent.indexOf('kakaotalk') > -1) {
+        window.location.href = 'kakaotalk://web/openExternalApp?url=' + encodeURIComponent(window.location.href);
+      }
+    }
+  }, []);
+
   // 1. Auth Listener
   useEffect(() => {
     try {
@@ -187,6 +197,7 @@ export default function ChallengeDashboard() {
     } catch (err: any) {
       console.warn('Database fetch failed. Running in offline fallback mode:', err);
       setIsOfflineMode(true);
+      setError(`데이터베이스 연결 실패: ${err.message || err.details || JSON.stringify(err)}`);
 
       // Offline mode fallback: show Google user's name if logged in
       if (session?.user) {
@@ -700,7 +711,7 @@ export default function ChallengeDashboard() {
                   새로 만드신 **[Supabase Dashboard](https://supabase.com/)** 프로젝트로 이동합니다.
                 </li>
                 <li>
-                  좌측 메뉴의 **SQL Editor**로 이동한 뒤, **[New Query]**를 생성합니다.
+                  좌측 메뉴 of SQL Editor로 이동한 뒤, **[New Query]**를 생성합니다.
                 </li>
                 <li>
                   아래의 SQL문을 그대로 복사해서 붙여넣고 우측 하단의 **[Run]** 버튼을 눌러 실행합니다:
@@ -729,12 +740,20 @@ CREATE POLICY "Allow public delete" ON public.memos FOR DELETE USING (true);`}
             <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
             <div>
               <p className="font-bold mb-1">📢 Supabase 오프라인 모드 활성화 안내</p>
-              <p className="opacity-95 text-[11px] mb-2">
+              <p className="opacity-95 text-[11px] mb-1">
                 현재 데이터베이스 연결이 일시적으로 불가능하여 **오프라인 모드**로 동작하고 있습니다. 닉네임과 스탬프 저장 기능은 브라우저 캐시(`localStorage`)를 통해 안전하게 유지되며 테스트 가능합니다.
               </p>
+              
+              {/* Detailed connection error log rendered directly inside the banner */}
+              {error && (
+                <div className="mt-2 mb-3 p-2.5 rounded-lg bg-rose-500/5 border border-rose-500/10 text-rose-500 text-[10px] font-mono select-text break-all">
+                  <strong>🔴 상세 연결 오류:</strong> {error}
+                </div>
+              )}
+
               <button 
                 onClick={handleTriggerMockLogin}
-                className="mt-2 bg-amber-500 hover:bg-amber-600 text-white font-bold px-3 py-1.5 rounded-lg text-[10px] cursor-pointer transition-colors shadow-sm"
+                className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-3 py-1.5 rounded-lg text-[10px] cursor-pointer transition-colors shadow-sm"
               >
                 임시로 오프라인(Mock) 로그인으로 테스트하기
               </button>
