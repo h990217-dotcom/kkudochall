@@ -351,6 +351,26 @@ export default function ChallengeDashboard() {
     }
   };
 
+  // Naver Sign In - Seamlessly works inside KakaoTalk, Naver and other mobile webviews!
+  const handleNaverLogin = async () => {
+    setError(null);
+    setIsSubmitting(true);
+    try {
+      const { error: loginError } = await supabase.auth.signInWithOAuth({
+        provider: 'naver' as any,
+        options: {
+          redirectTo: typeof window !== 'undefined' ? window.location.origin : undefined
+        }
+      });
+      if (loginError) throw loginError;
+    } catch (err: any) {
+      console.warn('Naver login redirection failed:', err);
+      setError(`네이버 로그인 연동 실패: ${err.message || '네트워크 연결 오류'}`);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   // Manual force escape for mobile in-app WebViews
   const handleForceEscapeBrowser = () => {
     if (typeof window !== 'undefined') {
@@ -809,27 +829,39 @@ export default function ChallengeDashboard() {
             </div>
           ) : (
             <div className="flex flex-col items-center">
-              <div 
-                onClick={handleGoogleLogin}
-                className="bg-white/80 backdrop-blur-md text-zinc-700 border border-sky-100/50 px-4 py-2 rounded-full flex items-center gap-1.5 font-bold text-xs shadow-sm cursor-pointer hover:bg-slate-50 hover:scale-105 transition-all duration-200"
-              >
-                <span className="flex items-center">
-                  <span className="text-blue-500 font-extrabold text-[10px]">G</span>
-                  <span className="text-red-500 font-extrabold text-[10px]">o</span>
-                  <span className="text-yellow-500 font-extrabold text-[10px]">o</span>
-                  <span className="text-blue-500 font-extrabold text-[10px]">g</span>
-                  <span className="text-green-500 font-extrabold text-[10px]">l</span>
-                  <span className="text-red-500 font-extrabold text-[10px]">e</span>
-                </span>
-                <span>로그인</span>
+              <div className="flex items-center gap-2">
+                {/* Google Login */}
+                <div 
+                  onClick={handleGoogleLogin}
+                  className="bg-white/80 backdrop-blur-md text-zinc-700 border border-sky-100/50 px-4 py-2 rounded-full flex items-center gap-1.5 font-bold text-xs shadow-sm cursor-pointer hover:bg-slate-50 hover:scale-105 transition-all duration-200"
+                >
+                  <span className="flex items-center">
+                    <span className="text-blue-500 font-extrabold text-[10px]">G</span>
+                    <span className="text-red-500 font-extrabold text-[10px]">o</span>
+                    <span className="text-yellow-500 font-extrabold text-[10px]">o</span>
+                    <span className="text-blue-500 font-extrabold text-[10px]">g</span>
+                    <span className="text-green-500 font-extrabold text-[10px]">l</span>
+                    <span className="text-red-500 font-extrabold text-[10px]">e</span>
+                  </span>
+                  <span>로그인</span>
+                </div>
+
+                {/* Naver Login (Works beautifully inside WebViews) */}
+                <div 
+                  onClick={handleNaverLogin}
+                  className="bg-[#03C75A] text-white border border-[#02b34f]/10 px-4 py-2 rounded-full flex items-center gap-1.5 font-bold text-xs shadow-sm cursor-pointer hover:bg-[#02a64a] hover:scale-105 transition-all duration-200"
+                >
+                  <span className="font-black text-[11px] bg-white text-[#03C75A] w-4 h-4 rounded-md flex items-center justify-center leading-none text-center">N</span>
+                  <span>네이버 로그인</span>
+                </div>
               </div>
               
-              {/* Always visible help escape button for any mobile/tablet user agent */}
+              {/* Help escape button for Google OAuth issues in restricted webviews */}
               <button
                 onClick={handleForceEscapeBrowser}
                 className="mt-2.5 text-[9px] font-bold text-slate-500 hover:text-sky-500 underline decoration-dotted cursor-pointer flex items-center justify-center gap-1 bg-slate-100 hover:bg-slate-200 px-3 py-1 rounded-full border border-slate-200/50 shadow-sm transition-colors"
               >
-                <span>🌐</span> 네이버/카톡 등 앱 로그인 오류 해결하기
+                <span>🌐</span> 구글 로그인 오류(403) 해결하기
               </button>
             </div>
           )}
