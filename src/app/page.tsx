@@ -351,21 +351,21 @@ export default function ChallengeDashboard() {
     }
   };
 
-  // Naver Sign In - Seamlessly works inside KakaoTalk, Naver and other mobile webviews!
-  const handleNaverLogin = async () => {
+  // Kakao Sign In - Seamlessly works inside KakaoTalk, Naver and other mobile webviews!
+  const handleKakaoLogin = async () => {
     setError(null);
     setIsSubmitting(true);
     try {
       const { error: loginError } = await supabase.auth.signInWithOAuth({
-        provider: 'naver' as any,
+        provider: 'kakao',
         options: {
           redirectTo: typeof window !== 'undefined' ? window.location.origin : undefined
         }
       });
       if (loginError) throw loginError;
     } catch (err: any) {
-      console.warn('Naver login redirection failed:', err);
-      setError(`네이버 로그인 연동 실패: ${err.message || '네트워크 연결 오류'}`);
+      console.warn('Kakao login redirection failed:', err);
+      setError(`카카오 로그인 연동 실패: ${err.message || '네트워크 연결 오류'}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -846,13 +846,13 @@ export default function ChallengeDashboard() {
                   <span>로그인</span>
                 </div>
 
-                {/* Naver Login (Works beautifully inside WebViews) */}
+                {/* Kakao Login (Works beautifully inside WebViews) */}
                 <div 
-                  onClick={handleNaverLogin}
-                  className="bg-[#03C75A] text-white border border-[#02b34f]/10 px-4 py-2 rounded-full flex items-center gap-1.5 font-bold text-xs shadow-sm cursor-pointer hover:bg-[#02a64a] hover:scale-105 transition-all duration-200"
+                  onClick={handleKakaoLogin}
+                  className="bg-[#FEE500] text-[#191919] border border-[#FEE500]/10 px-4 py-2 rounded-full flex items-center gap-1.5 font-bold text-xs shadow-sm cursor-pointer hover:bg-[#e6ce00] hover:scale-105 transition-all duration-200"
                 >
-                  <span className="font-black text-[11px] bg-white text-[#03C75A] w-4 h-4 rounded-md flex items-center justify-center leading-none text-center">N</span>
-                  <span>네이버 로그인</span>
+                  <span className="font-black text-[10px] bg-[#191919] text-[#FEE500] w-4 h-4 rounded-md flex items-center justify-center leading-none text-center">K</span>
+                  <span>카카오 로그인</span>
                 </div>
               </div>
               
