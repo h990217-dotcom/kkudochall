@@ -67,7 +67,12 @@ export default function ChallengeDashboard() {
         userAgent.indexOf('naver') > -1 ||
         userAgent.indexOf('band') > -1 ||
         userAgent.indexOf('line') > -1 ||
-        userAgent.indexOf('wv') > -1;
+        userAgent.indexOf('wv') > -1 ||
+        userAgent.indexOf('gsa') > -1 ||
+        userAgent.indexOf('slack') > -1 ||
+        userAgent.indexOf('twitter') > -1 ||
+        userAgent.indexOf('tiktok') > -1 ||
+        userAgent.indexOf('inapp') > -1;
 
       if (isInApp) {
         // 1. KakaoTalk: Redirect to system default browser (Android & iOS)
@@ -81,6 +86,9 @@ export default function ChallengeDashboard() {
         if (isAndroid) {
           const rawUrl = window.location.href.replace(/^https?:\/\//, '');
           const intentUrl = `intent://${rawUrl}#Intent;scheme=https;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end`;
+          
+          // Double-safety: Show guide modal first in case the intent is silently blocked
+          setShowInAppBrowserModal(true);
           window.location.href = intentUrl;
           return;
         }
@@ -290,7 +298,12 @@ export default function ChallengeDashboard() {
         userAgent.indexOf('naver') > -1 ||
         userAgent.indexOf('band') > -1 ||
         userAgent.indexOf('line') > -1 ||
-        userAgent.indexOf('wv') > -1;
+        userAgent.indexOf('wv') > -1 ||
+        userAgent.indexOf('gsa') > -1 ||
+        userAgent.indexOf('slack') > -1 ||
+        userAgent.indexOf('twitter') > -1 ||
+        userAgent.indexOf('tiktok') > -1 ||
+        userAgent.indexOf('inapp') > -1;
 
       if (isInApp) {
         // 1. KakaoTalk: Redirect to system default browser
@@ -305,6 +318,9 @@ export default function ChallengeDashboard() {
         if (isAndroid) {
           const rawUrl = window.location.href.replace(/^https?:\/\//, '');
           const intentUrl = `intent://${rawUrl}#Intent;scheme=https;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end`;
+          
+          // Double-safety: Show guide modal first in case the intent is silently blocked
+          setShowInAppBrowserModal(true);
           window.location.href = intentUrl;
           setIsSubmitting(false);
           return;
@@ -1021,7 +1037,7 @@ CREATE POLICY "Allow public delete" ON public.memos FOR DELETE USING (true);`}
         © 2026 Kkudoki Challenge Dashboard. Syncing via Supabase.
       </footer>
 
-      {/* iOS In-App Browser Guidance Modal */}
+      {/* Mobile In-App Browser Guidance Modal */}
       {showInAppBrowserModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
           <div className="bg-white rounded-[2rem] border border-sky-100 p-6 max-w-sm w-full shadow-2xl flex flex-col items-center text-center animate-scale-up">
@@ -1032,17 +1048,17 @@ CREATE POLICY "Allow public delete" ON public.memos FOR DELETE USING (true);`}
             <h3 className="text-lg font-black text-slate-800 mb-2">구글 로그인 지원 안내</h3>
             
             <p className="text-xs text-slate-500 leading-relaxed mb-5">
-              현재 인앱 브라우저로 접속 중입니다. 구글 정책상 로그인을 하려면 외부 브라우저(Safari)가 필요합니다.
+              현재 인앱 브라우저로 접속 중입니다. 구글 정책상 로그인을 하려면 외부 브라우저(Chrome/Safari)가 필요합니다.
             </p>
             
             <div className="bg-sky-50/50 border border-sky-100/50 rounded-2xl p-4 w-full text-[11px] text-sky-800 font-bold mb-6 text-left leading-normal">
               <p className="mb-2 flex items-start gap-1.5">
                 <span className="w-4.5 h-4.5 rounded-full bg-sky-500 text-white flex items-center justify-center text-[9px] shrink-0 font-black">1</span>
-                <span>화면 우측 상단의 <strong className="text-sky-600">더보기(…)</strong> 또는 하단 메뉴를 누릅니다.</span>
+                <span>화면 우측 상단(또는 하단)의 <strong className="text-sky-600">더보기(…)</strong> 또는 메뉴를 누릅니다.</span>
               </p>
               <p className="flex items-start gap-1.5">
                 <span className="w-4.5 h-4.5 rounded-full bg-sky-500 text-white flex items-center justify-center text-[9px] shrink-0 font-black">2</span>
-                <span><strong className="text-sky-600">[Safari로 열기]</strong> 또는 <strong className="text-sky-600">[다른 브라우저로 열기]</strong>를 누릅니다.</span>
+                <span><strong className="text-sky-600">[기본 브라우저로 열기]</strong> 또는 <strong className="text-sky-600">[크롬/Safari로 열기]</strong>를 누릅니다.</span>
               </p>
             </div>
 
@@ -1050,12 +1066,12 @@ CREATE POLICY "Allow public delete" ON public.memos FOR DELETE USING (true);`}
               onClick={() => {
                 if (typeof window !== 'undefined') {
                   navigator.clipboard.writeText(window.location.href);
-                  alert('주소가 복사되었습니다! Safari 앱을 열고 주소창에 붙여넣어 주세요.');
+                  alert('주소가 복사되었습니다! 크롬/Safari 앱을 열고 주소창에 붙여넣어 주세요.');
                 }
               }}
               className="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-3.5 rounded-2xl text-xs transition-all duration-200 shadow-lg shadow-sky-500/20 cursor-pointer"
             >
-              주소 복사하고 Safari에서 열기
+              주소 복사하고 외부 브라우저에서 열기
             </button>
           </div>
         </div>
