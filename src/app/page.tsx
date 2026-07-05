@@ -52,6 +52,7 @@ export default function ChallengeDashboard() {
   const [isOfflineMode, setIsOfflineMode] = useState(false); // Local backup state
   const [isTableMissing, setIsTableMissing] = useState(false); // Specific banner for missing public.memos table
   const [showInAppBrowserModal, setShowInAppBrowserModal] = useState(false); // For iOS Naver/Instagram bypass
+  const [isMobileDevice, setIsMobileDevice] = useState(false); // Manually show escape hatch for mobile users
 
   const nameInputRef = useRef<HTMLInputElement>(null);
 
@@ -142,6 +143,12 @@ export default function ChallengeDashboard() {
 
   // Load offline data backup on mount
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const userAgent = navigator.userAgent.toLowerCase();
+      const mobile = /android|iphone|ipad|ipod/.test(userAgent);
+      setIsMobileDevice(mobile);
+    }
+
     const savedLocalStamps = localStorage.getItem('local_checked_stamps_v5');
     const savedLocalUrl = localStorage.getItem('local_time_capsule_url_v5');
     const savedLocalName = localStorage.getItem('local_user_nickname_v5');
@@ -349,6 +356,32 @@ export default function ChallengeDashboard() {
       setError(`구글 로그인 연동 실패: ${err.message || '네트워크 연결 오류'}`);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  // Manual force escape for mobile in-app WebViews
+  const handleForceEscapeBrowser = () => {
+    if (typeof window !== 'undefined') {
+      const userAgent = navigator.userAgent.toLowerCase();
+      
+      // 1. KakaoTalk: Redirect
+      if (userAgent.indexOf('kakaotalk') > -1) {
+        window.location.href = 'kakaotalk://web/openExternalApp?url=' + encodeURIComponent(window.location.href);
+        return;
+      }
+
+      // 2. Android: Use intent scheme to force launch Chrome
+      const isAndroid = userAgent.indexOf('android') > -1;
+      if (isAndroid) {
+        const rawUrl = window.location.href.replace(/^https?:\/\//, '');
+        const intentUrl = `intent://${rawUrl}#Intent;scheme=https;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end`;
+        setShowInAppBrowserModal(true); // Show guide modal as fallback
+        window.location.href = intentUrl;
+        return;
+      }
+
+      // 3. iOS/Others: Show modal instructions
+      setShowInAppBrowserModal(true);
     }
   };
 
@@ -736,19 +769,29 @@ export default function ChallengeDashboard() {
               <span>로그아웃</span>
             </div>
           ) : (
-            <div 
-              onClick={handleGoogleLogin}
-              className="bg-white/80 backdrop-blur-md text-zinc-700 border border-sky-100/50 px-4 py-2 rounded-full flex items-center gap-1.5 font-bold text-xs shadow-sm cursor-pointer hover:bg-slate-50 hover:scale-105 transition-all duration-200"
-            >
-              <span className="flex items-center">
-                <span className="text-blue-500 font-extrabold text-[10px]">G</span>
-                <span className="text-red-500 font-extrabold text-[10px]">o</span>
-                <span className="text-yellow-500 font-extrabold text-[10px]">o</span>
-                <span className="text-blue-500 font-extrabold text-[10px]">g</span>
-                <span className="text-green-500 font-extrabold text-[10px]">l</span>
-                <span className="text-red-500 font-extrabold text-[10px]">e</span>
-              </span>
-              <span>로그인</span>
+            <div className="flex flex-col items-center">
+              <div 
+                onClick={handleGoogleLogin}
+                className="bg-white/80 backdrop-blur-md text-zinc-700 border border-sky-100/50 px-4 py-2 rounded-full flex items-center gap-1.5 font-bold text-xs shadow-sm cursor-pointer hover:bg-slate-50 hover:scale-105 transition-all duration-200"
+              >
+                <span className="flex items-center">
+                  <span className="text-blue-500 font-extrabold text-[10px]">G</span>
+                  <span className="text-red-500 font-extrabold text-[10px]">o</span>
+                  <span className="text-yellow-500 font-extrabold text-[10px]">o</span>
+                  <span className="text-blue-500 font-extrabold text-[10px]">g</span>
+                  <span className="text-green-500 font-extrabold text-[10px]">l</span>
+                  <span className="text-red-500 font-extrabold text-[10px]">e</span>
+                </span>
+                <span>로그인</span>
+              </div>
+              {isMobileDevice && (
+                <button
+                  onClick={handleForceEscapeBrowser}
+                  className="mt-2 text-[9px] font-bold text-slate-500 hover:text-sky-500 underline decoration-dotted cursor-pointer flex items-center justify-center gap-1"
+                >
+                  <span>🌐</span> 로그인 에러 해결 방법
+                </button>
+              )}
             </div>
           )}
 
