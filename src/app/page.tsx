@@ -56,7 +56,7 @@ export default function ChallengeDashboard() {
 
   const nameInputRef = useRef<HTMLInputElement>(null);
 
-  // In-app browser bypass script for KakaoTalk, Naver, Instagram, Band, etc.
+  // In-app browser detection on mount (only auto-open modal for iOS)
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const userAgent = navigator.userAgent.toLowerCase();
@@ -76,26 +76,8 @@ export default function ChallengeDashboard() {
         userAgent.indexOf('inapp') > -1;
 
       if (isInApp) {
-        // 1. KakaoTalk: Redirect to system default browser (Android & iOS)
-        if (userAgent.indexOf('kakaotalk') > -1) {
-          window.location.href = 'kakaotalk://web/openExternalApp?url=' + encodeURIComponent(window.location.href);
-          return;
-        }
-
-        // 2. Android: Use intent scheme to force launch Chrome
-        const isAndroid = userAgent.indexOf('android') > -1;
-        if (isAndroid) {
-          const rawUrl = window.location.href.replace(/^https?:\/\//, '');
-          const intentUrl = `intent://${rawUrl}#Intent;scheme=https;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end`;
-          
-          // Double-safety: Show guide modal first in case the intent is silently blocked
-          setShowInAppBrowserModal(true);
-          window.location.href = intentUrl;
-          return;
-        }
-
-        // 3. iOS: Show modal instructions to tap options -> Open in Safari
         const isIos = /iphone|ipad|ipod/.test(userAgent);
+        // iOS users get the guide modal automatically on mount
         if (isIos) {
           setShowInAppBrowserModal(true);
         }
@@ -320,15 +302,25 @@ export default function ChallengeDashboard() {
           return;
         }
 
-        // 2. Android: Use intent scheme to force launch Chrome
+        // 2. Android: Use intent scheme inside a safe try-catch wrapper (prevents ERR_UNKNOWN_URL_SCHEME crash)
         const isAndroid = userAgent.indexOf('android') > -1;
         if (isAndroid) {
-          const rawUrl = window.location.href.replace(/^https?:\/\//, '');
-          const intentUrl = `intent://${rawUrl}#Intent;scheme=https;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end`;
-          
-          // Double-safety: Show guide modal first in case the intent is silently blocked
-          setShowInAppBrowserModal(true);
-          window.location.href = intentUrl;
+          setShowInAppBrowserModal(true); // Show guide modal as absolute fallback
+          try {
+            const rawUrl = window.location.href.replace(/^https?:\/\//, '');
+            const intentUrl = `intent://${rawUrl}#Intent;scheme=https;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end`;
+            
+            // Use iframe for redirect to prevent Naver App from showing "Webpage not available" page
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.src = intentUrl;
+            document.body.appendChild(iframe);
+            setTimeout(() => {
+              document.body.removeChild(iframe);
+            }, 1000);
+          } catch (e) {
+            console.warn('Intent redirect failed:', e);
+          }
           setIsSubmitting(false);
           return;
         }
@@ -370,13 +362,25 @@ export default function ChallengeDashboard() {
         return;
       }
 
-      // 2. Android: Use intent scheme to force launch Chrome
+      // 2. Android: Use intent scheme inside a safe try-catch wrapper (prevents ERR_UNKNOWN_URL_SCHEME crash)
       const isAndroid = userAgent.indexOf('android') > -1;
       if (isAndroid) {
-        const rawUrl = window.location.href.replace(/^https?:\/\//, '');
-        const intentUrl = `intent://${rawUrl}#Intent;scheme=https;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end`;
-        setShowInAppBrowserModal(true); // Show guide modal as fallback
-        window.location.href = intentUrl;
+        setShowInAppBrowserModal(true); // Show guide modal as absolute fallback
+        try {
+          const rawUrl = window.location.href.replace(/^https?:\/\//, '');
+          const intentUrl = `intent://${rawUrl}#Intent;scheme=https;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end`;
+          
+          // Use iframe for redirect to prevent Naver App from showing "Webpage not available" page
+          const iframe = document.createElement('iframe');
+          iframe.style.display = 'none';
+          iframe.src = intentUrl;
+          document.body.appendChild(iframe);
+          setTimeout(() => {
+            document.body.removeChild(iframe);
+          }, 1000);
+        } catch (e) {
+          console.warn('Intent redirect failed:', e);
+        }
         return;
       }
 
@@ -1080,28 +1084,106 @@ CREATE POLICY "Allow public delete" ON public.memos FOR DELETE USING (true);`}
         © 2026 Kkudoki Challenge Dashboard. Syncing via Supabase.
       </footer>
 
-      {/* Mobile In-App Browser Guidance Modal */}
+      {/* Mobile In-App Browser Guidance Modal with robust inline styles */}
       {showInAppBrowserModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-white rounded-[2rem] border border-sky-100 p-6 max-w-sm w-full shadow-2xl flex flex-col items-center text-center animate-scale-up">
-            <div className="w-12 h-12 rounded-full bg-sky-500/10 flex items-center justify-center mb-4">
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 99999,
+          backgroundColor: 'rgba(15, 23, 42, 0.85)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '16px',
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)'
+        }}>
+          <div style={{
+            backgroundColor: '#ffffff',
+            borderRadius: '28px',
+            border: '1px solid #e0f2fe',
+            padding: '24px',
+            maxWidth: '360px',
+            width: '100%',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            textAlign: 'center'
+          }}>
+            <div style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '9999px',
+              backgroundColor: '#e0f2fe',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: '16px'
+            }}>
               <AlertCircle className="w-6 h-6 text-sky-500" />
             </div>
             
-            <h3 className="text-lg font-black text-slate-800 mb-2">구글 로그인 지원 안내</h3>
+            <h3 style={{
+              fontSize: '18px',
+              fontWeight: 900,
+              color: '#0f172a',
+              marginBottom: '8px'
+            }}>구글 로그인 지원 안내</h3>
             
-            <p className="text-xs text-slate-500 leading-relaxed mb-5">
+            <p style={{
+              fontSize: '12px',
+              color: '#64748b',
+              lineHeight: '1.6',
+              marginBottom: '20px'
+            }}>
               현재 인앱 브라우저로 접속 중입니다. 구글 정책상 로그인을 하려면 외부 브라우저(Chrome/Safari)가 필요합니다.
             </p>
             
-            <div className="bg-sky-50/50 border border-sky-100/50 rounded-2xl p-4 w-full text-[11px] text-sky-800 font-bold mb-6 text-left leading-normal">
-              <p className="mb-2 flex items-start gap-1.5">
-                <span className="w-4.5 h-4.5 rounded-full bg-sky-500 text-white flex items-center justify-center text-[9px] shrink-0 font-black">1</span>
-                <span>화면 우측 상단(또는 하단)의 <strong className="text-sky-600">더보기(…)</strong> 또는 메뉴를 누릅니다.</span>
+            <div style={{
+              backgroundColor: '#f0f9ff',
+              border: '1px solid rgba(14, 165, 233, 0.1)',
+              borderRadius: '16px',
+              padding: '16px',
+              width: '100%',
+              fontSize: '11px',
+              color: '#0369a1',
+              fontWeight: 'bold',
+              marginBottom: '24px',
+              textAlign: 'left',
+              lineHeight: '1.6'
+            }}>
+              <p style={{ marginBottom: '8px', display: 'flex', alignItems: 'start', gap: '6px' }}>
+                <span style={{
+                  width: '18px',
+                  height: '18px',
+                  borderRadius: '9999px',
+                  backgroundColor: '#0ea5e9',
+                  color: '#ffffff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '9px',
+                  flexShrink: 0,
+                  fontWeight: 900
+                }}>1</span>
+                <span>화면 우측 상단(또는 하단)의 <strong style={{ color: '#0284c7' }}>더보기(…)</strong> 또는 메뉴를 누릅니다.</span>
               </p>
-              <p className="flex items-start gap-1.5">
-                <span className="w-4.5 h-4.5 rounded-full bg-sky-500 text-white flex items-center justify-center text-[9px] shrink-0 font-black">2</span>
-                <span><strong className="text-sky-600">[기본 브라우저로 열기]</strong> 또는 <strong className="text-sky-600">[크롬/Safari로 열기]</strong>를 누릅니다.</span>
+              <p style={{ display: 'flex', alignItems: 'start', gap: '6px' }}>
+                <span style={{
+                  width: '18px',
+                  height: '18px',
+                  borderRadius: '9999px',
+                  backgroundColor: '#0ea5e9',
+                  color: '#ffffff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '9px',
+                  flexShrink: 0,
+                  fontWeight: 900
+                }}>2</span>
+                <span><strong style={{ color: '#0284c7' }}>[기본 브라우저로 열기]</strong> 또는 <strong style={{ color: '#0284c7' }}>[크롬/Safari로 열기]</strong>를 누릅니다.</span>
               </p>
             </div>
 
