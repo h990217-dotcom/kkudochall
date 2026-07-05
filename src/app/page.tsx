@@ -823,14 +823,14 @@ export default function ChallengeDashboard() {
                 </span>
                 <span>로그인</span>
               </div>
-              {isMobileDevice && (
-                <button
-                  onClick={handleForceEscapeBrowser}
-                  className="mt-2 text-[9px] font-bold text-slate-500 hover:text-sky-500 underline decoration-dotted cursor-pointer flex items-center justify-center gap-1"
-                >
-                  <span>🌐</span> 로그인 에러 해결 방법
-                </button>
-              )}
+              
+              {/* Always visible help escape button for any mobile/tablet user agent */}
+              <button
+                onClick={handleForceEscapeBrowser}
+                className="mt-2.5 text-[9px] font-bold text-slate-500 hover:text-sky-500 underline decoration-dotted cursor-pointer flex items-center justify-center gap-1 bg-slate-100 hover:bg-slate-200 px-3 py-1 rounded-full border border-slate-200/50 shadow-sm transition-colors"
+              >
+                <span>🌐</span> 네이버/카톡 등 앱 로그인 오류 해결하기
+              </button>
             </div>
           )}
 
