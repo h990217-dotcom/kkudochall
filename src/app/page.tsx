@@ -278,6 +278,48 @@ export default function ChallengeDashboard() {
   const handleGoogleLogin = async () => {
     setError(null);
     setIsSubmitting(true);
+
+    // In-app browser check directly on user click gesture (prevents WebViews from blocking redirects)
+    if (typeof window !== 'undefined') {
+      const userAgent = navigator.userAgent.toLowerCase();
+      const isInApp = 
+        userAgent.indexOf('kakaotalk') > -1 ||
+        userAgent.indexOf('instagram') > -1 ||
+        userAgent.indexOf('fbav') > -1 ||
+        userAgent.indexOf('fban') > -1 ||
+        userAgent.indexOf('naver') > -1 ||
+        userAgent.indexOf('band') > -1 ||
+        userAgent.indexOf('line') > -1 ||
+        userAgent.indexOf('wv') > -1;
+
+      if (isInApp) {
+        // 1. KakaoTalk: Redirect to system default browser
+        if (userAgent.indexOf('kakaotalk') > -1) {
+          window.location.href = 'kakaotalk://web/openExternalApp?url=' + encodeURIComponent(window.location.href);
+          setIsSubmitting(false);
+          return;
+        }
+
+        // 2. Android: Use intent scheme to force launch Chrome
+        const isAndroid = userAgent.indexOf('android') > -1;
+        if (isAndroid) {
+          const rawUrl = window.location.href.replace(/^https?:\/\//, '');
+          const intentUrl = `intent://${rawUrl}#Intent;scheme=https;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end`;
+          window.location.href = intentUrl;
+          setIsSubmitting(false);
+          return;
+        }
+
+        // 3. iOS: Show modal instructions to tap options -> Open in Safari
+        const isIos = /iphone|ipad|ipod/.test(userAgent);
+        if (isIos) {
+          setShowInAppBrowserModal(true);
+          setIsSubmitting(false);
+          return;
+        }
+      }
+    }
+
     try {
       const { error: loginError } = await supabase.auth.signInWithOAuth({
         provider: 'google',
