@@ -693,6 +693,41 @@ export default function ChallengeDashboard() {
     return rawDays <= TOTAL_CHALLENGE_DAYS ? `Day ${rawDays}` : '종료됨';
   }, []);
 
+  // Robust clipboard copy handler for restricted in-app mobile WebViews
+  const copyToClipboard = (text: string) => {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text)
+        .then(() => alert('주소가 복사되었습니다! 크롬/Safari 앱을 열고 주소창에 붙여넣어 주세요.'))
+        .catch(() => fallbackCopy(text));
+    } else {
+      fallbackCopy(text);
+    }
+  };
+
+  const fallbackCopy = (text: string) => {
+    try {
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      textArea.style.top = '0';
+      textArea.style.left = '0';
+      textArea.style.position = 'fixed';
+      textArea.style.opacity = '0';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
+      if (successful) {
+        alert('주소가 복사되었습니다! 크롬/Safari 앱을 열고 주소창에 붙여넣어 주세요.');
+      } else {
+        throw new Error('Copy command failed');
+      }
+    } catch (err) {
+      // Prompt user to copy manually if even execCommand is blocked
+      window.prompt('인앱 브라우저 보안으로 인해 자동 복사가 차단되었습니다.\n아래 주소를 길게 눌러 직접 복사해 주세요:', text);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col py-10 px-4 sm:px-6 lg:px-8 select-none">
       
@@ -1190,11 +1225,22 @@ CREATE POLICY "Allow public delete" ON public.memos FOR DELETE USING (true);`}
             <button
               onClick={() => {
                 if (typeof window !== 'undefined') {
-                  navigator.clipboard.writeText(window.location.href);
-                  alert('주소가 복사되었습니다! 크롬/Safari 앱을 열고 주소창에 붙여넣어 주세요.');
+                  copyToClipboard(window.location.href.split('?')[0]);
                 }
               }}
-              className="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-3.5 rounded-2xl text-xs transition-all duration-200 shadow-lg shadow-sky-500/20 cursor-pointer"
+              style={{
+                width: '100%',
+                backgroundColor: '#0ea5e9',
+                color: '#ffffff',
+                fontWeight: 'bold',
+                padding: '14px 0',
+                borderRadius: '16px',
+                fontSize: '13px',
+                border: 'none',
+                cursor: 'pointer',
+                boxShadow: '0 10px 15px -3px rgba(14, 165, 233, 0.3)',
+                transition: 'background-color 0.2s'
+              }}
             >
               주소 복사하고 외부 브라우저에서 열기
             </button>
