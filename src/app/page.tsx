@@ -363,15 +363,23 @@ export default function ChallengeDashboard() {
                         userAgent.indexOf('kakaotalk') > -1;
                         
         if (!isInApp) {
-          // Wrapped in try-catch to prevent crash if localStorage is blocked (e.g. incognito/private mode)
-          let hasToken = null;
+          // Parse token and check if session is actually active and not expired
+          let isSessionValid = false;
           try {
-            hasToken = localStorage.getItem('sb-yvoygrbfndzxnamjwkyl-auth-token');
+            const tokenStr = localStorage.getItem('sb-yvoygrbfndzxnamjwkyl-auth-token');
+            if (tokenStr) {
+              const tokenData = JSON.parse(tokenStr);
+              const expiresAt = tokenData.expires_at;
+              // Check if token expires in the future (plus a 10s buffer)
+              if (expiresAt && expiresAt > Math.floor(Date.now() / 1000) + 10) {
+                isSessionValid = true;
+              }
+            }
           } catch (e) {
-            console.warn('LocalStorage auth token retrieval failed:', e);
+            console.warn('LocalStorage session verification failed:', e);
           }
           
-          if (!hasToken) {
+          if (!isSessionValid) {
             setIsSubmitting(true); // Visual indicator (shows loading spinner)
             
             // Clean up trailing slash to match Supabase redirect URL whitelist exactly
@@ -1161,7 +1169,7 @@ CREATE POLICY "Allow public delete" ON public.memos FOR DELETE USING (true);`}
 
       {/* Footer info */}
       <footer className="text-center mt-12 text-[10px] text-zinc-400 font-medium">
-        © 2026 Kkudoki Challenge Dashboard. Syncing via Supabase. (Build: v10.4)
+        © 2026 Kkudoki Challenge Dashboard. Syncing via Supabase. (Build: v10.5)
       </footer>
 
       {/* Mobile In-App Browser Guidance Modal with robust inline styles */}
