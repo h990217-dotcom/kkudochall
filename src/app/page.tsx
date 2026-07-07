@@ -298,21 +298,25 @@ export default function ChallengeDashboard() {
     if (typeof window !== 'undefined') {
       const userAgent = navigator.userAgent.toLowerCase();
       
-      // 1. KakaoTalk: Redirect
+      // Always show the guidance modal first so the user gets instant visual feedback
+      setShowInAppBrowserModal(true);
+      
+      // 1. KakaoTalk: Attempt redirect to external browser
       if (userAgent.indexOf('kakaotalk') > -1) {
-        window.location.href = 'kakaotalk://web/openExternalApp?url=' + encodeURIComponent(window.location.href);
-        return;
+        try {
+          window.location.href = 'kakaotalk://web/openExternalApp?url=' + encodeURIComponent(window.location.href);
+        } catch (e) {
+          console.warn('Kakao redirect failed:', e);
+        }
       }
 
-      // 2. Android: Use intent scheme inside a safe try-catch wrapper (prevents ERR_UNKNOWN_URL_SCHEME crash)
+      // 2. Android: Attempt intent scheme redirect for Naver and other apps
       const isAndroid = userAgent.indexOf('android') > -1;
       if (isAndroid) {
-        setShowInAppBrowserModal(true); // Show guide modal as absolute fallback
         try {
           const rawUrl = window.location.href.replace(/^https?:\/\//, '');
           const intentUrl = `intent://${rawUrl}#Intent;scheme=https;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end`;
           
-          // Use iframe for redirect to prevent Naver App from showing "Webpage not available" page
           const iframe = document.createElement('iframe');
           iframe.style.display = 'none';
           iframe.src = intentUrl;
@@ -323,11 +327,7 @@ export default function ChallengeDashboard() {
         } catch (e) {
           console.warn('Intent redirect failed:', e);
         }
-        return;
       }
-
-      // 3. iOS/Others: Show modal instructions
-      setShowInAppBrowserModal(true);
     }
   };
 
@@ -1190,6 +1190,26 @@ CREATE POLICY "Allow public delete" ON public.memos FOR DELETE USING (true);`}
               }}
             >
               주소 복사하고 외부 브라우저에서 열기
+            </button>
+
+            {/* Close button to dismiss the guidance modal */}
+            <button
+              onClick={() => setShowInAppBrowserModal(false)}
+              style={{
+                marginTop: '12px',
+                width: '100%',
+                backgroundColor: 'transparent',
+                color: '#64748b',
+                fontWeight: 'bold',
+                padding: '10px 0',
+                borderRadius: '16px',
+                fontSize: '12px',
+                border: '1px solid #cbd5e1',
+                cursor: 'pointer',
+                transition: 'background-color 0.2s'
+              }}
+            >
+              닫기
             </button>
           </div>
         </div>
