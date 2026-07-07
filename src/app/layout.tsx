@@ -23,11 +23,30 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="en">
+      <head>
+        {/* 👇여기에 카카오톡 탈출 강제 스크립트가 추가되었습니다 */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                var userAgent = navigator.userAgent.toLowerCase();
+                if (userAgent.indexOf('kakaotalk') > -1) {
+                  var currentUrl = window.location.href;
+                  if (userAgent.indexOf('iphone') > -1 || userAgent.indexOf('ipad') > -1 || userAgent.indexOf('ipod') > -1) {
+                    window.location.href = 'kakaotalk://web/openExternalApp?url=' + encodeURIComponent(currentUrl);
+                  } else {
+                    window.location.href = 'intent://' + currentUrl.replace(/^https?:\\/\\//, '') + '#Intent;scheme=https;package=com.android.chrome;end';
+                  }
+                }
+              })();
+            `,
+          }}
+        />
+      </head>
+      <body className={`${geistSans.variable} ${geistMono.variable} h-full antialiased min-h-full flex flex-col`}>
+        {children}
+      </body>
     </html>
   );
 }
