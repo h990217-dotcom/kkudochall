@@ -271,75 +271,19 @@ export default function ChallengeDashboard() {
     };
   }, [session]);
 
-  // Google Sign In - ALWAYS trigger OAuth redirect to let users choose/type their email
+  // Google Sign In - ALWAYS trigger OAuth redirect with account selector
   const handleGoogleLogin = async () => {
     setError(null);
     setIsSubmitting(true);
-
-    // In-app browser check directly on user click gesture (prevents WebViews from blocking redirects)
-    if (typeof window !== 'undefined') {
-      const userAgent = navigator.userAgent.toLowerCase();
-      const isInApp = 
-        userAgent.indexOf('kakaotalk') > -1 ||
-        userAgent.indexOf('instagram') > -1 ||
-        userAgent.indexOf('fbav') > -1 ||
-        userAgent.indexOf('fban') > -1 ||
-        userAgent.indexOf('naver') > -1 ||
-        userAgent.indexOf('band') > -1 ||
-        userAgent.indexOf('line') > -1 ||
-        userAgent.indexOf('wv') > -1 ||
-        userAgent.indexOf('gsa') > -1 ||
-        userAgent.indexOf('slack') > -1 ||
-        userAgent.indexOf('twitter') > -1 ||
-        userAgent.indexOf('tiktok') > -1 ||
-        userAgent.indexOf('inapp') > -1;
-
-      if (isInApp) {
-        // 1. KakaoTalk: Redirect to system default browser
-        if (userAgent.indexOf('kakaotalk') > -1) {
-          window.location.href = 'kakaotalk://web/openExternalApp?url=' + encodeURIComponent(window.location.href);
-          setIsSubmitting(false);
-          return;
-        }
-
-        // 2. Android: Use intent scheme inside a safe try-catch wrapper (prevents ERR_UNKNOWN_URL_SCHEME crash)
-        const isAndroid = userAgent.indexOf('android') > -1;
-        if (isAndroid) {
-          setShowInAppBrowserModal(true); // Show guide modal as absolute fallback
-          try {
-            const rawUrl = window.location.href.replace(/^https?:\/\//, '');
-            const intentUrl = `intent://${rawUrl}#Intent;scheme=https;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end`;
-            
-            // Use iframe for redirect to prevent Naver App from showing "Webpage not available" page
-            const iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-            iframe.src = intentUrl;
-            document.body.appendChild(iframe);
-            setTimeout(() => {
-              document.body.removeChild(iframe);
-            }, 1000);
-          } catch (e) {
-            console.warn('Intent redirect failed:', e);
-          }
-          setIsSubmitting(false);
-          return;
-        }
-
-        // 3. iOS: Show modal instructions to tap options -> Open in Safari
-        const isIos = /iphone|ipad|ipod/.test(userAgent);
-        if (isIos) {
-          setShowInAppBrowserModal(true);
-          setIsSubmitting(false);
-          return;
-        }
-      }
-    }
 
     try {
       const { error: loginError } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: typeof window !== 'undefined' ? window.location.origin : undefined
+          redirectTo: typeof window !== 'undefined' ? window.location.origin : undefined,
+          queryParams: {
+            prompt: 'select_account' // Forces account chooser screen (allowing different users to select their accounts)
+          }
         }
       });
       if (loginError) throw loginError;
