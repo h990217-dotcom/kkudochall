@@ -14,7 +14,7 @@ on:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -74,7 +74,16 @@ jobs:
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
       - name: Build with Next.js
-        run: ${{ steps.detect-package-manager.outputs.runner }} next build
+        run: |
+          npm run build > build-output.log 2>&1 || {
+            echo "=== BUILD FAILED. COMMITTING LOGS ==="
+            git config --global user.name "github-actions[bot]"
+            git config --global user.email "github-actions[bot]@users.noreply.github.com"
+            git add build-output.log
+            git commit -m "chore: save build error logs [skip ci]" || true
+            git push origin main || true
+            exit 1
+          }
         env:
           NEXT_PUBLIC_SUPABASE_URL: "https://yvoygrbfndzxnamjwkyl.supabase.co"
           NEXT_PUBLIC_SUPABASE_ANON_KEY: "sb_publishable_Zw93mJM53H83B0fvf5DAbQ_3OswS9oh"
