@@ -811,7 +811,7 @@ export default function ChallengeDashboard() {
         
         {/* Main Title */}
         <h1 className="text-4xl sm:text-5xl font-[900] tracking-tight text-slate-800 flex items-center justify-center gap-2 drop-shadow-sm leading-tight">
-          Consistency Wins
+          변화는 반복에서 시작된다.
           <Sparkles className="w-6 h-6 text-sky-400 shrink-0" />
         </h1>
 
@@ -1196,7 +1196,7 @@ CREATE POLICY "Allow public delete" ON public.memos FOR DELETE USING (true);`}
 
       {/* Footer info */}
       <footer className="text-center mt-12 text-[10px] text-zinc-400 font-medium">
-        © 2026 Kkudoki Challenge Dashboard. Syncing via Supabase. (Build: v10.8)
+        © 2026 Kkudoki Challenge Dashboard. Syncing via Supabase. (Build: v10.9)
       </footer>
 
       {/* Mobile In-App Browser Guidance Modal with robust inline styles */}
