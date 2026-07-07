@@ -280,15 +280,16 @@ export default function ChallengeDashboard() {
       const userAgent = navigator.userAgent.toLowerCase();
       const isInApp = userAgent.indexOf('naver') > -1 || userAgent.indexOf('instagram') > -1 || userAgent.indexOf('fbav') > -1 || userAgent.indexOf('line') > -1;
 
-      // 1. KakaoTalk: Intercept and automatically launch default browser
+      // 1. KakaoTalk: Intercept, try automatic redirect, and always show guidance modal as a fallback
       if (userAgent.indexOf('kakaotalk') > -1) {
+        setShowInAppBrowserModal(true); // Show modal immediately so the user isn't stuck if the redirect is blocked
         try {
           window.location.href = 'kakaotalk://web/openExternalApp?url=' + encodeURIComponent(window.location.href);
-          setIsSubmitting(false);
-          return;
         } catch (e) {
           console.warn('Kakao automatic redirect failed:', e);
         }
+        setIsSubmitting(false);
+        return;
       }
 
       // 2. Android In-App (Naver, etc.): Attempt automatic redirect using Intent scheme
