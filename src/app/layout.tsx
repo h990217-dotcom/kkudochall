@@ -25,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* 오류를 일으키던 역슬래시를 없애고 안전하게 가공한 스크립트입니다 */}
+        {/* URL 파라미터 유실을 방지하기 위해 window.location.href 전체를 안전하게 인코딩합니다 */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -33,11 +33,14 @@ export default function RootLayout({
                 var userAgent = navigator.userAgent.toLowerCase();
                 if (userAgent.indexOf('kakaotalk') > -1) {
                   var currentUrl = window.location.href;
+                  
                   if (userAgent.indexOf('iphone') > -1 || userAgent.indexOf('ipad') > -1 || userAgent.indexOf('ipod') > -1) {
+                    // 아이폰 탈출
                     window.location.href = 'kakaotalk://web/openExternalApp?url=' + encodeURIComponent(currentUrl);
                   } else {
-                    var rawUrl = currentUrl.replace('https://', '').replace('http://', '');
-                    window.location.href = 'intent://' + rawUrl + '#Intent;scheme=https;package=com.android.chrome;end';
+                    // 안드로이드 탈출 (파라미터가 깨지지 않도록 전체 url을 변환 없이 인텐트에 주입)
+                    var cleanUrl = currentUrl.replace(/^https?:\\/\\//, '');
+                    window.location.href = 'intent://' + cleanUrl + '#Intent;scheme=https;package=com.android.chrome;end';
                   }
                 }
               })();
