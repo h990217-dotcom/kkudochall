@@ -284,7 +284,9 @@ export default function ChallengeDashboard() {
       if (userAgent.indexOf('kakaotalk') > -1) {
         setShowInAppBrowserModal(true); // Show modal immediately so the user isn't stuck if the redirect is blocked
         try {
-          window.location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(window.location.href);
+          const currentUrl = window.location.href.split('?')[0].split('#')[0];
+          const autoLoginUrl = `${currentUrl}?autoLogin=true`;
+          window.location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(autoLoginUrl);
         } catch (e) {
           console.warn('Kakao automatic redirect failed:', e);
         }
@@ -296,7 +298,9 @@ export default function ChallengeDashboard() {
       const isAndroid = userAgent.indexOf('android') > -1;
       if (isAndroid && isInApp) {
         try {
-          const rawUrl = window.location.href.replace(/^https?:\/\//, '');
+          const currentUrl = window.location.href.split('?')[0].split('#')[0];
+          const autoLoginUrl = `${currentUrl}?autoLogin=true`;
+          const rawUrl = autoLoginUrl.replace(/^https?:\/\//, '');
           const intentUrl = `intent://${rawUrl}#Intent;scheme=https;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end`;
           
           const iframe = document.createElement('iframe');
@@ -344,6 +348,32 @@ export default function ChallengeDashboard() {
     }
   };
 
+  // Automatically trigger Google Login if opened with ?autoLogin=true (e.g. redirected from Kakao/Naver)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const isAutoLogin = urlParams.get('autoLogin') === 'true';
+      
+      if (isAutoLogin && !session && !isLoading) {
+        const userAgent = navigator.userAgent.toLowerCase();
+        const isInApp = userAgent.indexOf('naver') > -1 || 
+                        userAgent.indexOf('instagram') > -1 || 
+                        userAgent.indexOf('fbav') > -1 || 
+                        userAgent.indexOf('line') > -1 || 
+                        userAgent.indexOf('kakaotalk') > -1;
+                        
+        if (!isInApp) {
+          // Clean up the URL query parameter so it doesn't loop
+          const currentPath = window.location.href.split('?')[0].split('#')[0];
+          window.history.replaceState({}, document.title, currentPath);
+          
+          // Trigger Google Login
+          handleGoogleLogin();
+        }
+      }
+    }
+  }, [session, isLoading]);
+
 
   // Manual force escape for mobile in-app WebViews
   const handleForceEscapeBrowser = () => {
@@ -356,7 +386,9 @@ export default function ChallengeDashboard() {
       // 1. KakaoTalk: Attempt redirect to external browser
       if (userAgent.indexOf('kakaotalk') > -1) {
         try {
-          window.location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(window.location.href);
+          const currentUrl = window.location.href.split('?')[0].split('#')[0];
+          const autoLoginUrl = `${currentUrl}?autoLogin=true`;
+          window.location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(autoLoginUrl);
         } catch (e) {
           console.warn('Kakao redirect failed:', e);
         }
@@ -366,7 +398,9 @@ export default function ChallengeDashboard() {
       const isAndroid = userAgent.indexOf('android') > -1;
       if (isAndroid) {
         try {
-          const rawUrl = window.location.href.replace(/^https?:\/\//, '');
+          const currentUrl = window.location.href.split('?')[0].split('#')[0];
+          const autoLoginUrl = `${currentUrl}?autoLogin=true`;
+          const rawUrl = autoLoginUrl.replace(/^https?:\/\//, '');
           const intentUrl = `intent://${rawUrl}#Intent;scheme=https;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end`;
           
           const iframe = document.createElement('iframe');
