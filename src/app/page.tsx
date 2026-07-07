@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Sparkles, Calendar, RefreshCw, AlertCircle, LogOut } from 'lucide-react';
+import { Sparkles, Calendar, RefreshCw, AlertCircle, LogOut, Pencil } from 'lucide-react';
 
 interface SupabaseMemoRow {
   id: string;
@@ -730,7 +730,10 @@ export default function ChallengeDashboard() {
                   onClick={(e) => e.stopPropagation()}
                 />
               ) : (
-                <span>{userNickname}</span>
+                <span className="flex items-center gap-1.5">
+                  <span>{userNickname}</span>
+                  <Pencil className="w-2.5 h-2.5 opacity-80" />
+                </span>
               )}
             </div>
           ) : (
@@ -929,10 +932,11 @@ CREATE POLICY "Allow public delete" ON public.memos FOR DELETE USING (true);`}
                         ) : (
                           <h2 
                             onClick={() => setIsEditingName(true)}
-                            className="text-lg font-black text-zinc-800 cursor-pointer hover:text-sky-500 flex items-center gap-1"
+                            className="text-lg font-black text-zinc-800 cursor-pointer hover:text-sky-500 flex items-center gap-1.5 group"
                             title="클릭하여 이름 수정"
                           >
-                            {participant.name}
+                            <span>{participant.name}</span>
+                            <Pencil className="w-3.5 h-3.5 text-zinc-400 group-hover:text-sky-500 transition-colors" />
                           </h2>
                         )
                       ) : (
