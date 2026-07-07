@@ -53,6 +53,7 @@ export default function ChallengeDashboard() {
   const [isTableMissing, setIsTableMissing] = useState(false); // Specific banner for missing public.memos table
   const [showInAppBrowserModal, setShowInAppBrowserModal] = useState(false); // For iOS Naver/Instagram bypass
   const [isMobileDevice, setIsMobileDevice] = useState(false); // Manually show escape hatch for mobile users
+  const [isRedirecting, setIsRedirecting] = useState(false); // State to track autoLogin redirection status
 
   const nameInputRef = useRef<HTMLInputElement>(null);
 
@@ -381,6 +382,7 @@ export default function ChallengeDashboard() {
           
           if (!isSessionValid) {
             setIsSubmitting(true); // Visual indicator (shows loading spinner)
+            setIsRedirecting(true); // Show fallback redirect warning banner
             
             // Clean up trailing slash to match Supabase redirect URL whitelist exactly
             const currentPath = window.location.href.split('?')[0].split('#')[0].replace(/\/$/, '');
@@ -779,6 +781,22 @@ export default function ChallengeDashboard() {
   return (
     <div className="min-h-screen flex flex-col py-10 px-4 sm:px-6 lg:px-8 select-none">
       
+      {/* Fallback Banner for blocked auto-login redirects */}
+      {isRedirecting && (
+        <div className="fixed top-0 left-0 right-0 z-[10000] bg-sky-500 text-white py-3 px-4 text-center font-bold text-xs flex flex-col sm:flex-row items-center justify-center gap-2 shadow-lg animate-pulse">
+          <span>🔄 구글 로그인 페이지로 이동하고 있습니다. 화면이 넘어가지 않으면</span>
+          <button 
+            onClick={() => {
+              const currentPath = window.location.href.split('?')[0].split('#')[0].replace(/\/$/, '');
+              window.location.href = `https://yvoygrbfndzxnamjwkyl.supabase.co/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(currentPath)}&prompt=select_account`;
+            }}
+            className="bg-white text-sky-600 px-3 py-1 rounded-lg font-black underline hover:bg-sky-50 transition-all text-[11px]"
+          >
+            [여기 클릭하여 로그인]
+          </button>
+        </div>
+      )}
+      
       {/* Brand Header */}
       <div className="text-center mb-8 animate-fade-in flex flex-col items-center">
         
@@ -1169,7 +1187,7 @@ CREATE POLICY "Allow public delete" ON public.memos FOR DELETE USING (true);`}
 
       {/* Footer info */}
       <footer className="text-center mt-12 text-[10px] text-zinc-400 font-medium">
-        © 2026 Kkudoki Challenge Dashboard. Syncing via Supabase. (Build: v10.5)
+        © 2026 Kkudoki Challenge Dashboard. Syncing via Supabase. (Build: v10.6)
       </footer>
 
       {/* Mobile In-App Browser Guidance Modal with robust inline styles */}
