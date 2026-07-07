@@ -280,10 +280,7 @@ export default function ChallengeDashboard() {
       const { error: loginError } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: typeof window !== 'undefined' ? window.location.origin : undefined,
-          queryParams: {
-            prompt: 'select_account' // Forces account chooser screen (allowing different users to select their accounts)
-          }
+          redirectTo: typeof window !== 'undefined' ? window.location.origin : undefined
         }
       });
       if (loginError) throw loginError;
