@@ -699,8 +699,8 @@ export default function ChallengeDashboard() {
       });
     }
 
-    // Pad with empty mock cards up to 14 participants, sequentially naming them '참가자 [index]'
-    const neededMocksCount = 14 - result.length;
+    // Pad with empty mock cards up to 19 participants, sequentially naming them '참가자 [index]'
+    const neededMocksCount = 19 - result.length;
     for (let i = 1; i <= neededMocksCount; i++) {
       const participantIndex = result.length + 1;
       result.push({
@@ -1196,7 +1196,7 @@ CREATE POLICY "Allow public delete" ON public.memos FOR DELETE USING (true);`}
 
       {/* Footer info */}
       <footer className="text-center mt-12 text-[10px] text-zinc-400 font-medium">
-        © 2026 Kkudoki Challenge Dashboard. Syncing via Supabase. (Build: v10.7)
+        © 2026 Kkudoki Challenge Dashboard. Syncing via Supabase. (Build: v10.8)
       </footer>
 
       {/* Mobile In-App Browser Guidance Modal with robust inline styles */}
