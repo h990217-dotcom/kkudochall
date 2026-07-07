@@ -381,15 +381,9 @@ export default function ChallengeDashboard() {
           }
           
           if (!isSessionValid) {
-            setIsSubmitting(true); // Visual indicator (shows loading spinner)
-            setIsRedirecting(true); // Show fallback redirect warning banner
-            
-            // Clean up trailing slash to match Supabase redirect URL whitelist exactly
-            const currentPath = window.location.href.split('?')[0].split('#')[0].replace(/\/$/, '');
-            
-            // Direct synchronous redirect to bypass mobile browser popup blockers
-            const supabaseUrl = 'https://yvoygrbfndzxnamjwkyl.supabase.co';
-            window.location.href = `${supabaseUrl}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(currentPath)}&prompt=select_account`;
+            // Set isRedirecting to true to display the clickable login button banner,
+            // but do NOT do window.location.href auto-redirect to avoid PKCE 400 errors.
+            setIsRedirecting(true);
           }
         }
       }
@@ -783,16 +777,31 @@ export default function ChallengeDashboard() {
       
       {/* Fallback Banner for blocked auto-login redirects */}
       {isRedirecting && (
-        <div className="fixed top-0 left-0 right-0 z-[10000] bg-sky-500 text-white py-3 px-4 text-center font-bold text-xs flex flex-col sm:flex-row items-center justify-center gap-2 shadow-lg animate-pulse">
-          <span>🔄 구글 로그인 페이지로 이동하고 있습니다. 화면이 넘어가지 않으면</span>
+        <div className="fixed top-0 left-0 right-0 z-[10000] bg-sky-500 text-white py-3 px-4 text-center font-bold text-xs flex flex-col sm:flex-row items-center justify-center gap-2 shadow-lg">
+          <span>🔄 외부 브라우저 연결에 성공했습니다! 아래 버튼을 클릭하여 로그인을 완료해 주세요:</span>
           <button 
-            onClick={() => {
-              const currentPath = window.location.href.split('?')[0].split('#')[0].replace(/\/$/, '');
-              window.location.href = `https://yvoygrbfndzxnamjwkyl.supabase.co/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(currentPath)}&prompt=select_account`;
+            onClick={async () => {
+              setIsSubmitting(true);
+              try {
+                const currentPath = window.location.href.split('?')[0].split('#')[0].replace(/\/$/, '');
+                const { error: loginError } = await supabase.auth.signInWithOAuth({
+                  provider: 'google',
+                  options: {
+                    redirectTo: currentPath,
+                    queryParams: {
+                      prompt: 'select_account'
+                    }
+                  }
+                });
+                if (loginError) throw loginError;
+              } catch (err: any) {
+                alert(`구글 로그인 오류: ${err.message || err}`);
+                setIsSubmitting(false);
+              }
             }}
-            className="bg-white text-sky-600 px-3 py-1 rounded-lg font-black underline hover:bg-sky-50 transition-all text-[11px]"
+            className="bg-white text-sky-600 px-4 py-1.5 rounded-lg font-black hover:bg-sky-50 transition-all text-[11px] shadow-sm cursor-pointer"
           >
-            [여기 클릭하여 로그인]
+            구글 로그인 계속하기
           </button>
         </div>
       )}
@@ -1187,7 +1196,7 @@ CREATE POLICY "Allow public delete" ON public.memos FOR DELETE USING (true);`}
 
       {/* Footer info */}
       <footer className="text-center mt-12 text-[10px] text-zinc-400 font-medium">
-        © 2026 Kkudoki Challenge Dashboard. Syncing via Supabase. (Build: v10.6)
+        © 2026 Kkudoki Challenge Dashboard. Syncing via Supabase. (Build: v10.7)
       </footer>
 
       {/* Mobile In-App Browser Guidance Modal with robust inline styles */}
