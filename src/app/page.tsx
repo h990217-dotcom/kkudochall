@@ -276,6 +276,54 @@ export default function ChallengeDashboard() {
     setError(null);
     setIsSubmitting(true);
 
+    if (typeof window !== 'undefined') {
+      const userAgent = navigator.userAgent.toLowerCase();
+      const isInApp = userAgent.indexOf('naver') > -1 || userAgent.indexOf('instagram') > -1 || userAgent.indexOf('fbav') > -1 || userAgent.indexOf('line') > -1;
+
+      // 1. KakaoTalk: Intercept and automatically launch default browser
+      if (userAgent.indexOf('kakaotalk') > -1) {
+        try {
+          window.location.href = 'kakaotalk://web/openExternalApp?url=' + encodeURIComponent(window.location.href);
+          setIsSubmitting(false);
+          return;
+        } catch (e) {
+          console.warn('Kakao automatic redirect failed:', e);
+        }
+      }
+
+      // 2. Android In-App (Naver, etc.): Attempt automatic redirect using Intent scheme
+      const isAndroid = userAgent.indexOf('android') > -1;
+      if (isAndroid && isInApp) {
+        try {
+          const rawUrl = window.location.href.replace(/^https?:\/\//, '');
+          const intentUrl = `intent://${rawUrl}#Intent;scheme=https;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end`;
+          
+          const iframe = document.createElement('iframe');
+          iframe.style.display = 'none';
+          iframe.src = intentUrl;
+          document.body.appendChild(iframe);
+          setTimeout(() => {
+            document.body.removeChild(iframe);
+          }, 1000);
+          
+          // Fallback modal shown in background
+          setShowInAppBrowserModal(true);
+          setIsSubmitting(false);
+          return;
+        } catch (e) {
+          console.warn('Android automatic intent failed:', e);
+        }
+      }
+
+      // 3. iOS In-App (Naver, Instagram, etc.): Automatic redirect blocked, show guide modal
+      const isIOS = /iphone|ipad|ipod/.test(userAgent);
+      if (isIOS && isInApp) {
+        setShowInAppBrowserModal(true);
+        setIsSubmitting(false);
+        return;
+      }
+    }
+
     try {
       const { error: loginError } = await supabase.auth.signInWithOAuth({
         provider: 'google',
