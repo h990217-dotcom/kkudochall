@@ -1,7 +1,5 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  output: 'export', // 이 줄이 있어야 정적 HTML 파일 추출이 가능해집니다!
+const nextConfig = {
+  output: 'export' as const, // 이 줄이 있어야 정적 HTML 파일 추출이 가능해집니다!
   basePath: '/kkudochall', // 내 저장소 이름
   assetPrefix: '/kkudochall', // 이미지나 CSS가 깨지지 않게 해주는 설정
   images: {
