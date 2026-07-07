@@ -284,7 +284,7 @@ export default function ChallengeDashboard() {
       if (userAgent.indexOf('kakaotalk') > -1) {
         setShowInAppBrowserModal(true); // Show modal immediately so the user isn't stuck if the redirect is blocked
         try {
-          window.location.href = 'kakaotalk://web/openExternalApp?url=' + encodeURIComponent(window.location.href);
+          window.location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(window.location.href);
         } catch (e) {
           console.warn('Kakao automatic redirect failed:', e);
         }
@@ -356,7 +356,7 @@ export default function ChallengeDashboard() {
       // 1. KakaoTalk: Attempt redirect to external browser
       if (userAgent.indexOf('kakaotalk') > -1) {
         try {
-          window.location.href = 'kakaotalk://web/openExternalApp?url=' + encodeURIComponent(window.location.href);
+          window.location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(window.location.href);
         } catch (e) {
           console.warn('Kakao redirect failed:', e);
         }
