@@ -363,12 +363,19 @@ export default function ChallengeDashboard() {
                         userAgent.indexOf('kakaotalk') > -1;
                         
         if (!isInApp) {
-          // Check if user is already logged in by checking the Supabase local storage key
-          const hasToken = localStorage.getItem('sb-yvoygrbfndzxnamjwkyl-auth-token');
+          // Wrapped in try-catch to prevent crash if localStorage is blocked (e.g. incognito/private mode)
+          let hasToken = null;
+          try {
+            hasToken = localStorage.getItem('sb-yvoygrbfndzxnamjwkyl-auth-token');
+          } catch (e) {
+            console.warn('LocalStorage auth token retrieval failed:', e);
+          }
+          
           if (!hasToken) {
-            // Clean up the URL query parameter so it doesn't loop
-            const currentPath = window.location.href.split('?')[0].split('#')[0];
-            window.history.replaceState({}, document.title, currentPath);
+            setIsSubmitting(true); // Visual indicator (shows loading spinner)
+            
+            // Clean up trailing slash to match Supabase redirect URL whitelist exactly
+            const currentPath = window.location.href.split('?')[0].split('#')[0].replace(/\/$/, '');
             
             // Direct synchronous redirect to bypass mobile browser popup blockers
             const supabaseUrl = 'https://yvoygrbfndzxnamjwkyl.supabase.co';
