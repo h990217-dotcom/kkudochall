@@ -354,7 +354,7 @@ export default function ChallengeDashboard() {
       const urlParams = new URLSearchParams(window.location.search);
       const isAutoLogin = urlParams.get('autoLogin') === 'true';
       
-      if (isAutoLogin && !session && !isLoading) {
+      if (isAutoLogin) {
         const userAgent = navigator.userAgent.toLowerCase();
         const isInApp = userAgent.indexOf('naver') > -1 || 
                         userAgent.indexOf('instagram') > -1 || 
@@ -363,17 +363,21 @@ export default function ChallengeDashboard() {
                         userAgent.indexOf('kakaotalk') > -1;
                         
         if (!isInApp) {
-          // Clean up the URL query parameter so it doesn't loop
-          const currentPath = window.location.href.split('?')[0].split('#')[0];
-          window.history.replaceState({}, document.title, currentPath);
-          
-          // Direct synchronous redirect to bypass mobile browser popup blockers
-          const supabaseUrl = 'https://yvoygrbfndzxnamjwkyl.supabase.co';
-          window.location.href = `${supabaseUrl}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(currentPath)}&prompt=select_account`;
+          // Check if user is already logged in by checking the Supabase local storage key
+          const hasToken = localStorage.getItem('sb-yvoygrbfndzxnamjwkyl-auth-token');
+          if (!hasToken) {
+            // Clean up the URL query parameter so it doesn't loop
+            const currentPath = window.location.href.split('?')[0].split('#')[0];
+            window.history.replaceState({}, document.title, currentPath);
+            
+            // Direct synchronous redirect to bypass mobile browser popup blockers
+            const supabaseUrl = 'https://yvoygrbfndzxnamjwkyl.supabase.co';
+            window.location.href = `${supabaseUrl}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(currentPath)}&prompt=select_account`;
+          }
         }
       }
     }
-  }, [session, isLoading]);
+  }, []);
 
 
   // Manual force escape for mobile in-app WebViews
