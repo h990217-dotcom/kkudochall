@@ -1161,7 +1161,7 @@ CREATE POLICY "Allow public delete" ON public.memos FOR DELETE USING (true);`}
 
       {/* Footer info */}
       <footer className="text-center mt-12 text-[10px] text-zinc-400 font-medium">
-        © 2026 Kkudoki Challenge Dashboard. Syncing via Supabase.
+        © 2026 Kkudoki Challenge Dashboard. Syncing via Supabase. (Build: v10.4)
       </footer>
 
       {/* Mobile In-App Browser Guidance Modal with robust inline styles */}
