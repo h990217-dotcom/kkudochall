@@ -25,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* 👇여기에 카카오톡 탈출 강제 스크립트가 추가되었습니다 */}
+        {/* 오류를 일으키던 역슬래시를 없애고 안전하게 가공한 스크립트입니다 */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -36,7 +36,8 @@ export default function RootLayout({
                   if (userAgent.indexOf('iphone') > -1 || userAgent.indexOf('ipad') > -1 || userAgent.indexOf('ipod') > -1) {
                     window.location.href = 'kakaotalk://web/openExternalApp?url=' + encodeURIComponent(currentUrl);
                   } else {
-                    window.location.href = 'intent://' + currentUrl.replace(/^https?:\\/\\//, '') + '#Intent;scheme=https;package=com.android.chrome;end';
+                    var rawUrl = currentUrl.replace('https://', '').replace('http://', '');
+                    window.location.href = 'intent://' + rawUrl + '#Intent;scheme=https;package=com.android.chrome;end';
                   }
                 }
               })();
