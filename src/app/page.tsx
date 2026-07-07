@@ -351,25 +351,6 @@ export default function ChallengeDashboard() {
     }
   };
 
-  // Kakao Sign In - Seamlessly works inside KakaoTalk, Naver and other mobile webviews!
-  const handleKakaoLogin = async () => {
-    setError(null);
-    setIsSubmitting(true);
-    try {
-      const { error: loginError } = await supabase.auth.signInWithOAuth({
-        provider: 'kakao',
-        options: {
-          redirectTo: typeof window !== 'undefined' ? window.location.origin : undefined
-        }
-      });
-      if (loginError) throw loginError;
-    } catch (err: any) {
-      console.warn('Kakao login redirection failed:', err);
-      setError(`카카오 로그인 연동 실패: ${err.message || '네트워크 연결 오류'}`);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   // Manual force escape for mobile in-app WebViews
   const handleForceEscapeBrowser = () => {
@@ -829,31 +810,20 @@ export default function ChallengeDashboard() {
             </div>
           ) : (
             <div className="flex flex-col items-center">
-              <div className="flex items-center gap-2">
-                {/* Google Login */}
-                <div 
-                  onClick={handleGoogleLogin}
-                  className="bg-white/80 backdrop-blur-md text-zinc-700 border border-sky-100/50 px-4 py-2 rounded-full flex items-center gap-1.5 font-bold text-xs shadow-sm cursor-pointer hover:bg-slate-50 hover:scale-105 transition-all duration-200"
-                >
-                  <span className="flex items-center">
-                    <span className="text-blue-500 font-extrabold text-[10px]">G</span>
-                    <span className="text-red-500 font-extrabold text-[10px]">o</span>
-                    <span className="text-yellow-500 font-extrabold text-[10px]">o</span>
-                    <span className="text-blue-500 font-extrabold text-[10px]">g</span>
-                    <span className="text-green-500 font-extrabold text-[10px]">l</span>
-                    <span className="text-red-500 font-extrabold text-[10px]">e</span>
-                  </span>
-                  <span>로그인</span>
-                </div>
-
-                {/* Kakao Login (Works beautifully inside WebViews) */}
-                <div 
-                  onClick={handleKakaoLogin}
-                  className="bg-[#FEE500] text-[#191919] border border-[#FEE500]/10 px-4 py-2 rounded-full flex items-center gap-1.5 font-bold text-xs shadow-sm cursor-pointer hover:bg-[#e6ce00] hover:scale-105 transition-all duration-200"
-                >
-                  <span className="font-black text-[10px] bg-[#191919] text-[#FEE500] w-4 h-4 rounded-md flex items-center justify-center leading-none text-center">K</span>
-                  <span>카카오 로그인</span>
-                </div>
+              {/* Google Login */}
+              <div 
+                onClick={handleGoogleLogin}
+                className="bg-white/80 backdrop-blur-md text-zinc-700 border border-sky-100/50 px-4 py-2 rounded-full flex items-center gap-1.5 font-bold text-xs shadow-sm cursor-pointer hover:bg-slate-50 hover:scale-105 transition-all duration-200"
+              >
+                <span className="flex items-center">
+                  <span className="text-blue-500 font-extrabold text-[10px]">G</span>
+                  <span className="text-red-500 font-extrabold text-[10px]">o</span>
+                  <span className="text-yellow-500 font-extrabold text-[10px]">o</span>
+                  <span className="text-blue-500 font-extrabold text-[10px]">g</span>
+                  <span className="text-green-500 font-extrabold text-[10px]">l</span>
+                  <span className="text-red-500 font-extrabold text-[10px]">e</span>
+                </span>
+                <span>로그인</span>
               </div>
               
               {/* Help escape button for Google OAuth issues in restricted webviews */}
