@@ -367,8 +367,9 @@ export default function ChallengeDashboard() {
           const currentPath = window.location.href.split('?')[0].split('#')[0];
           window.history.replaceState({}, document.title, currentPath);
           
-          // Trigger Google Login
-          handleGoogleLogin();
+          // Direct synchronous redirect to bypass mobile browser popup blockers
+          const supabaseUrl = 'https://yvoygrbfndzxnamjwkyl.supabase.co';
+          window.location.href = `${supabaseUrl}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(currentPath)}&prompt=select_account`;
         }
       }
     }
