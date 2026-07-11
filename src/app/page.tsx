@@ -1147,7 +1147,7 @@ CREATE POLICY "Allow public delete" ON public.memos FOR DELETE USING (true);`}
                           key={`stamp-${participant.id}-${day.dayNum}`}
                           className={`w-6.5 h-6.5 rounded-full flex items-center justify-center text-[8px] font-black border ${
                             isChecked
-                              ? 'bg-slate-200 border-slate-200 text-slate-400'
+                              ? 'bg-slate-700 border-slate-700 text-white shadow-sm shadow-slate-700/25'
                               : isToday
                                 ? 'border border-pink-500 text-pink-500 bg-pink-500/5 font-black ring-1 ring-pink-500/10'
                                 : 'bg-slate-50/50 border-slate-100/40 text-slate-300'
