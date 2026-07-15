@@ -65,32 +65,12 @@ export default function ChallengeDashboard() {
 
   const nameInputRef = useRef<HTMLInputElement>(null);
 
-  // In-app browser detection on mount (only auto-open modal for iOS)
+  // In-app browser detection on mount
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const userAgent = navigator.userAgent.toLowerCase();
-      const isInApp = 
-        userAgent.indexOf('kakaotalk') > -1 ||
-        userAgent.indexOf('instagram') > -1 ||
-        userAgent.indexOf('fbav') > -1 ||
-        userAgent.indexOf('fban') > -1 ||
-        userAgent.indexOf('naver') > -1 ||
-        userAgent.indexOf('band') > -1 ||
-        userAgent.indexOf('line') > -1 ||
-        userAgent.indexOf('wv') > -1 ||
-        userAgent.indexOf('gsa') > -1 ||
-        userAgent.indexOf('slack') > -1 ||
-        userAgent.indexOf('twitter') > -1 ||
-        userAgent.indexOf('tiktok') > -1 ||
-        userAgent.indexOf('inapp') > -1;
-
-      if (isInApp) {
-        const isIos = /iphone|ipad|ipod/.test(userAgent);
-        // iOS users get the guide modal automatically on mount
-        if (isIos) {
-          setShowInAppBrowserModal(true);
-        }
-      }
+      const mobile = /android|iphone|ipad|ipod/.test(userAgent);
+      setIsMobileDevice(mobile);
     }
   }, []);
 
