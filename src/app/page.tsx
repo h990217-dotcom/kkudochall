@@ -136,6 +136,22 @@ export default function ChallengeDashboard() {
     }
   }, []);
 
+  // Safe localStorage helper
+  const safeSetLocalStorage = (key: string, value: string) => {
+    try {
+      localStorage.setItem(key, value);
+    } catch (e) {
+      console.warn('localStorage setItem blocked:', e);
+    }
+  };
+  const safeRemoveLocalStorage = (key: string) => {
+    try {
+      localStorage.removeItem(key);
+    } catch (e) {
+      console.warn('localStorage removeItem blocked:', e);
+    }
+  };
+
   // Fetch verified dates, URL, and Nicknames from Supabase memos table
   const fetchStamps = async () => {
     setIsLoading(true);
@@ -165,7 +181,7 @@ export default function ChallengeDashboard() {
           .map(row => row.content.replace(stampPrefix, ''));
         
         setCheckedDates(stamps);
-        localStorage.setItem('local_checked_stamps_v5', JSON.stringify(stamps));
+        safeSetLocalStorage('local_checked_stamps_v5', JSON.stringify(stamps));
 
         // 2. Parse Time Capsule URL for current user
         const urlPrefix = `url:${userId}:`;
@@ -173,7 +189,7 @@ export default function ChallengeDashboard() {
         if (urlRow) {
           const urlVal = urlRow.content.replace(urlPrefix, '');
           setTimeCapsuleUrl(urlVal);
-          localStorage.setItem('local_time_capsule_url_v5', urlVal);
+          safeSetLocalStorage('local_time_capsule_url_v5', urlVal);
         }
 
         // 3. Parse Custom Nickname for current user
@@ -183,12 +199,12 @@ export default function ChallengeDashboard() {
           const nameVal = nicknameRow.content.replace(nicknamePrefix, '');
           setUserNickname(nameVal);
           setNameInput(nameVal);
-          localStorage.setItem('local_user_nickname_v5', nameVal);
+          safeSetLocalStorage('local_user_nickname_v5', nameVal);
         } else if (session?.user) {
           const googleName = session.user.user_metadata?.full_name || '참가자 1';
           setUserNickname(googleName);
           setNameInput(googleName);
-          localStorage.setItem('local_user_nickname_v5', googleName);
+          safeSetLocalStorage('local_user_nickname_v5', googleName);
         }
 
         // 4. Auto-register new logged in user into database if not present
@@ -437,7 +453,7 @@ export default function ChallengeDashboard() {
     setSession(mockSession);
     setUserNickname('Seunghee Huh');
     setNameInput('Seunghee Huh');
-    localStorage.setItem('local_user_nickname_v5', 'Seunghee Huh');
+    safeSetLocalStorage('local_user_nickname_v5', 'Seunghee Huh');
   };
 
   // Logout
@@ -452,9 +468,9 @@ export default function ChallengeDashboard() {
     setNameInput('참가자 1');
     setCheckedDates([]);
     setTimeCapsuleUrl('');
-    localStorage.removeItem('local_user_nickname_v5');
-    localStorage.removeItem('local_time_capsule_url_v5');
-    localStorage.removeItem('local_checked_stamps_v5');
+    safeRemoveLocalStorage('local_user_nickname_v5');
+    safeRemoveLocalStorage('local_time_capsule_url_v5');
+    safeRemoveLocalStorage('local_checked_stamps_v5');
   };
 
   // Save Custom Nickname
@@ -467,7 +483,7 @@ export default function ChallengeDashboard() {
     }
 
     setUserNickname(nextName);
-    localStorage.setItem('local_user_nickname_v5', nextName);
+    safeSetLocalStorage('local_user_nickname_v5', nextName);
     setIsEditingName(false);
 
     const userId = session?.user?.id || 'local';
@@ -502,7 +518,7 @@ export default function ChallengeDashboard() {
       : [...checkedDates, dateIsoStr];
 
     setCheckedDates(nextCheckedDates);
-    localStorage.setItem('local_checked_stamps_v5', JSON.stringify(nextCheckedDates));
+    safeSetLocalStorage('local_checked_stamps_v5', JSON.stringify(nextCheckedDates));
 
     const userId = session?.user?.id || 'local';
     const stampPrefix = `stamp:${userId}:`;
@@ -528,7 +544,7 @@ export default function ChallengeDashboard() {
   // Save Time Capsule URL
   const handleSaveUrl = async (urlVal: string) => {
     setTimeCapsuleUrl(urlVal);
-    localStorage.setItem('local_time_capsule_url_v5', urlVal);
+    safeSetLocalStorage('local_time_capsule_url_v5', urlVal);
 
     const userId = session?.user?.id || 'local';
     const urlPrefix = `url:${userId}:`;
@@ -715,7 +731,6 @@ export default function ChallengeDashboard() {
     start.setHours(0, 0, 0, 0);
     today.setHours(0, 0, 0, 0);
     const diffTime = today.getTime() - start.getTime();
-    const diffDays = Math.ceil(today.getTime() - start.getTime() / (1000 * 60 * 60 * 24)) + 1; // Safeguard calculation
     const rawDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
     
     if (rawDays <= 0) {
