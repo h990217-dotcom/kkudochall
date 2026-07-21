@@ -541,7 +541,7 @@ export default function ChallengeDashboard() {
         : await supabase.from('memos').insert([{ content: fullContent }]);
 
       if (writeError) {
-        setError(`타임캡슐 URL 저장 실패: ${writeError.message}`);
+        setError(`저서 URL 저장 실패: ${writeError.message}`);
       } else {
         fetchStamps();
       }
@@ -1140,22 +1140,35 @@ CREATE POLICY "Allow public delete" ON public.memos FOR DELETE USING (true);`}
                   </div>
                 </div>
 
-                {/* Time Capsule URL Section */}
+                {/* Book URL Section */}
                 <div className="mt-4 pt-3 border-t border-slate-100 flex flex-col gap-1">
-                  <label className="text-[9px] font-black text-slate-500">타임캡슐 URL :</label>
+                  <div className="flex justify-between items-center">
+                    <label className="text-[9px] font-black text-slate-500">저서 URL :</label>
+                    {(participant.isCurrentUser ? timeCapsuleUrl : participant.timeCapsuleUrl) && (
+                      <a href={(participant.isCurrentUser ? timeCapsuleUrl : participant.timeCapsuleUrl).startsWith('http') ? (participant.isCurrentUser ? timeCapsuleUrl : participant.timeCapsuleUrl) : `https://${(participant.isCurrentUser ? timeCapsuleUrl : participant.timeCapsuleUrl)}`} target="_blank" rel="noopener noreferrer" className="text-[9px] font-bold text-sky-500 hover:underline">
+                        이동 ↗
+                      </a>
+                    )}
+                  </div>
                   {participant.isCurrentUser ? (
-                    /* Current user can edit Time Capsule URL */
+                    /* Current user can edit Book URL */
                     <input 
                       type="text"
                       value={timeCapsuleUrl}
                       onChange={(e) => handleSaveUrl(e.target.value)}
-                      placeholder="타임캡슐 링크를 입력해 주세요..."
+                      placeholder="저서 링크를 입력해 주세요..."
                       className="w-full bg-slate-50 border border-slate-200 focus:border-sky-300 outline-none rounded-lg px-2.5 py-1 text-[10px] text-slate-700 transition-all font-medium"
                     />
                   ) : (
-                    /* Read-only Time Capsule URL for other participants */
+                    /* Read-only Book URL for other participants */
                     <div className="w-full bg-slate-50/50 border border-slate-100 text-[10px] text-slate-400 rounded-lg px-2.5 py-1 truncate font-medium">
-                      {participant.timeCapsuleUrl || 'URL 없음'}
+                      {participant.timeCapsuleUrl ? (
+                        <a href={participant.timeCapsuleUrl.startsWith('http') ? participant.timeCapsuleUrl : `https://${participant.timeCapsuleUrl}`} target="_blank" rel="noopener noreferrer" className="hover:underline hover:text-sky-500">
+                          {participant.timeCapsuleUrl}
+                        </a>
+                      ) : (
+                        'URL 없음'
+                      )}
                     </div>
                   )}
                 </div>
