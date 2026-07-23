@@ -780,7 +780,7 @@ export default function ChallengeDashboard() {
       
       {/* Fallback Banner for blocked auto-login redirects */}
       {isRedirecting && (
-        <div className="fixed top-0 left-0 right-0 z-[10000] bg-sky-500 text-white py-3 px-4 text-center font-bold text-xs flex flex-col sm:flex-row items-center justify-center gap-2 shadow-lg">
+        <div className="fixed top-0 left-0 right-0 z-[10000] bg-rose-500 text-white py-3 px-4 text-center font-bold text-xs flex flex-col sm:flex-row items-center justify-center gap-2 shadow-lg">
           <span>🔄 외부 브라우저 연결에 성공했습니다! 아래 버튼을 클릭하여 로그인을 완료해 주세요:</span>
           <button 
             onClick={async () => {
@@ -802,7 +802,7 @@ export default function ChallengeDashboard() {
                 setIsSubmitting(false);
               }
             }}
-            className="bg-white text-sky-600 px-4 py-1.5 rounded-lg font-black hover:bg-sky-50 transition-all text-[11px] shadow-sm cursor-pointer"
+            className="bg-white text-rose-600 px-4 py-1.5 rounded-lg font-black hover:bg-rose-50 transition-all text-[11px] shadow-sm cursor-pointer"
           >
             구글 로그인 계속하기
           </button>
@@ -815,17 +815,17 @@ export default function ChallengeDashboard() {
         {/* Main Title */}
         <h1 className="text-4xl sm:text-5xl font-[900] tracking-tight text-slate-800 flex items-center justify-center gap-2 drop-shadow-sm leading-tight">
           변화는 반복에서 시작된다.
-          <Sparkles className="w-6 h-6 text-sky-400 shrink-0" />
+          <Sparkles className="w-6 h-6 text-rose-400 shrink-0" />
         </h1>
 
         {/* Subtitle: 꾸도챌 시즌2 */}
-        <p className="mt-2 text-md sm:text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-sky-500 to-blue-600 tracking-wide">
+        <p className="mt-2 text-md sm:text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-rose-500 to-pink-600 tracking-wide">
           꾸도챌 시즌2
         </p>
 
         {/* Badge Pill */}
-        <div className="mt-4 inline-flex items-center gap-3 bg-white/80 border border-sky-100/50 rounded-full px-3.5 py-1.5 shadow-sm">
-          <span className="bg-sky-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full">
+        <div className="mt-4 inline-flex items-center gap-3 bg-white/80 border border-rose-100/50 rounded-full px-3.5 py-1.5 shadow-sm">
+          <span className="bg-rose-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full">
             {challengeDayNumber}
           </span>
           <span className="text-[10px] font-bold text-slate-700">
@@ -845,7 +845,7 @@ export default function ChallengeDashboard() {
             /* Logged In */
             <div 
               onClick={() => setIsEditingName(true)}
-              className="bg-[#0ea5e9] hover:bg-[#0284c7] text-white px-4 py-2 rounded-full flex items-center gap-1.5 font-bold text-xs shadow-md shadow-sky-500/10 hover:scale-105 transition-all duration-200 cursor-pointer"
+              className="bg-[#f43f5e] hover:bg-[#e11d48] text-white px-4 py-2 rounded-full flex items-center gap-1.5 font-bold text-xs shadow-md shadow-rose-500/10 hover:scale-105 transition-all duration-200 cursor-pointer"
             >
               <span>👋</span>
               {isEditingName ? (
@@ -883,7 +883,7 @@ export default function ChallengeDashboard() {
           {session ? (
             <div 
               onClick={handleLogout}
-              className="bg-white/80 backdrop-blur-md text-zinc-700 border border-sky-100/50 px-4 py-2 rounded-full flex items-center gap-1 font-bold text-xs shadow-sm cursor-pointer hover:bg-slate-50 hover:scale-105 transition-all duration-200"
+              className="bg-white/80 backdrop-blur-md text-zinc-700 border border-rose-100/50 px-4 py-2 rounded-full flex items-center gap-1 font-bold text-xs shadow-sm cursor-pointer hover:bg-slate-50 hover:scale-105 transition-all duration-200"
             >
               <LogOut className="w-3.5 h-3.5 text-slate-500" />
               <span>로그아웃</span>
@@ -893,7 +893,7 @@ export default function ChallengeDashboard() {
               {/* Google Login */}
               <div 
                 onClick={handleGoogleLogin}
-                className="bg-white/80 backdrop-blur-md text-zinc-700 border border-sky-100/50 px-4 py-2 rounded-full flex items-center gap-1.5 font-bold text-xs shadow-sm cursor-pointer hover:bg-slate-50 hover:scale-105 transition-all duration-200"
+                className="bg-white/80 backdrop-blur-md text-zinc-700 border border-rose-100/50 px-4 py-2 rounded-full flex items-center gap-1.5 font-bold text-xs shadow-sm cursor-pointer hover:bg-slate-50 hover:scale-105 transition-all duration-200"
               >
                 <span className="flex items-center">
                   <span className="text-blue-500 font-extrabold text-[10px]">G</span>
@@ -913,8 +913,8 @@ export default function ChallengeDashboard() {
             onClick={() => setShowDaysView(!showDaysView)}
             className={`border px-4 py-2 rounded-full flex items-center gap-1 font-bold text-xs transition-all duration-300 shadow-sm cursor-pointer hover:scale-105 ${
               showDaysView 
-                ? 'bg-sky-500 text-white border-sky-500 shadow-md shadow-sky-500/10'
-                : 'bg-white/80 text-zinc-700 border-sky-100/50 hover:bg-slate-50'
+                ? 'bg-rose-500 text-white border-rose-500 shadow-md shadow-rose-500/10'
+                : 'bg-white/80 text-zinc-700 border-rose-100/50 hover:bg-slate-50'
             }`}
           >
             <Calendar className="w-3.5 h-3.5" />
@@ -932,7 +932,7 @@ export default function ChallengeDashboard() {
         </div>
 
         {/* Monthly Switcher Row */}
-        <div className="flex flex-wrap gap-1.5 items-center justify-center p-1 bg-sky-500/5 border border-sky-100/50 rounded-full">
+        <div className="flex flex-wrap gap-1.5 items-center justify-center p-1 bg-rose-500/5 border border-rose-100/50 rounded-full">
           {MONTH_CONFIGS.map(cfg => {
             const isSelected = selectedMonth === cfg.monthNum;
             return (
@@ -941,8 +941,8 @@ export default function ChallengeDashboard() {
                 onClick={() => setSelectedMonth(cfg.monthNum)}
                 className={`text-[10px] sm:text-xs font-black px-4.5 py-1.5 rounded-full transition-all duration-300 ${
                   isSelected 
-                    ? 'bg-sky-500 text-white shadow-md shadow-sky-500/10 scale-105' 
-                    : 'text-slate-600 hover:text-sky-600 hover:bg-white/50'
+                    ? 'bg-rose-500 text-white shadow-md shadow-rose-500/10 scale-105' 
+                    : 'text-slate-600 hover:text-rose-600 hover:bg-white/50'
                 }`}
               >
                 {cfg.label}
@@ -1041,8 +1041,8 @@ CREATE POLICY "Allow public delete" ON public.memos FOR DELETE USING (true);`}
                 key={participant.id}
                 className={`glass-card rounded-[1.8rem] p-5 transition-all duration-300 flex flex-col justify-between ${
                   participant.isCurrentUser 
-                    ? 'border-2 border-sky-400 glow-sky' 
-                    : 'border border-sky-100/50'
+                    ? 'border-2 border-sky-400 glow-rose' 
+                    : 'border border-rose-100/50'
                 }`}
               >
                 <div>
@@ -1064,16 +1064,16 @@ CREATE POLICY "Allow public delete" ON public.memos FOR DELETE USING (true);`}
                                 setIsEditingName(false);
                               }
                             }}
-                            className="bg-slate-50 border border-sky-200 outline-none rounded px-1.5 py-0.5 text-base font-black w-24 text-zinc-800"
+                            className="bg-slate-50 border border-rose-200 outline-none rounded px-1.5 py-0.5 text-base font-black w-24 text-zinc-800"
                           />
                         ) : (
                           <h2 
                             onClick={() => setIsEditingName(true)}
-                            className="text-lg font-black text-zinc-800 cursor-pointer hover:text-sky-500 flex items-center gap-1.5 group"
+                            className="text-lg font-black text-zinc-800 cursor-pointer hover:text-rose-500 flex items-center gap-1.5 group"
                             title="클릭하여 이름 수정"
                           >
                             <span>{participant.name}</span>
-                            <Pencil className="w-3.5 h-3.5 text-zinc-400 group-hover:text-sky-500 transition-colors" />
+                            <Pencil className="w-3.5 h-3.5 text-zinc-400 group-hover:text-rose-500 transition-colors" />
                           </h2>
                         )
                       ) : (
@@ -1084,7 +1084,7 @@ CREATE POLICY "Allow public delete" ON public.memos FOR DELETE USING (true);`}
                       )}
 
                       {participant.isCurrentUser && (
-                        <span className="w-4 h-4 rounded-full bg-sky-500 text-white text-[9px] font-bold flex items-center justify-center shrink-0">
+                        <span className="w-4 h-4 rounded-full bg-rose-500 text-white text-[9px] font-bold flex items-center justify-center shrink-0">
                           나
                         </span>
                       )}
@@ -1094,7 +1094,7 @@ CREATE POLICY "Allow public delete" ON public.memos FOR DELETE USING (true);`}
                       <div className="text-sm font-black text-zinc-800">
                         {monthCheckedCount}<span className="text-zinc-400 font-normal text-[10px]">/{activeMonthTotalDays}</span>
                       </div>
-                      <div className="text-[9px] font-black text-sky-500">
+                      <div className="text-[9px] font-black text-rose-500">
                         {selectedMonth}월: {monthPercentage}%
                       </div>
                     </div>
@@ -1105,7 +1105,7 @@ CREATE POLICY "Allow public delete" ON public.memos FOR DELETE USING (true);`}
                     <div 
                       className={`h-full rounded-full transition-all duration-500 ${
                         participant.isCurrentUser 
-                          ? 'bg-gradient-to-r from-sky-400 via-sky-500 to-blue-500 ease-out' 
+                          ? 'bg-gradient-to-r from-rose-400 via-rose-500 to-pink-500 ease-out' 
                           : 'bg-slate-300'
                       }`}
                       style={{ width: `${monthPercentage}%` }}
@@ -1128,10 +1128,10 @@ CREATE POLICY "Allow public delete" ON public.memos FOR DELETE USING (true);`}
                           disabled={isLoading}
                           className={`w-6.5 h-6.5 rounded-full flex items-center justify-center text-[8px] font-black transition-all duration-200 border cursor-pointer hover:scale-110 ${
                             isChecked
-                              ? 'bg-sky-500 border-sky-500 text-white shadow-sm shadow-sky-500/25'
+                              ? 'bg-rose-500 border-rose-500 text-white shadow-sm shadow-rose-500/25'
                               : isToday
                                 ? 'border border-pink-500 text-pink-500 bg-pink-500/5 font-black ring-1 ring-pink-500/10'
-                                : 'bg-slate-100/70 border-slate-200/50 text-slate-500 hover:bg-sky-50 hover:text-sky-600'
+                                : 'bg-slate-100/70 border-slate-200/50 text-slate-500 hover:bg-rose-50 hover:text-rose-600'
                           }`}
                         >
                           {day.label}
@@ -1160,7 +1160,7 @@ CREATE POLICY "Allow public delete" ON public.memos FOR DELETE USING (true);`}
                   <div className="flex justify-between items-center">
                     <label className="text-[9px] font-black text-slate-500">저서 URL :</label>
                     {(participant.isCurrentUser ? timeCapsuleUrl : participant.timeCapsuleUrl) && (
-                      <a href={(participant.isCurrentUser ? timeCapsuleUrl : participant.timeCapsuleUrl).startsWith('http') ? (participant.isCurrentUser ? timeCapsuleUrl : participant.timeCapsuleUrl) : `https://${(participant.isCurrentUser ? timeCapsuleUrl : participant.timeCapsuleUrl)}`} target="_blank" rel="noopener noreferrer" className="text-[9px] font-bold text-sky-500 hover:underline">
+                      <a href={(participant.isCurrentUser ? timeCapsuleUrl : participant.timeCapsuleUrl).startsWith('http') ? (participant.isCurrentUser ? timeCapsuleUrl : participant.timeCapsuleUrl) : `https://${(participant.isCurrentUser ? timeCapsuleUrl : participant.timeCapsuleUrl)}`} target="_blank" rel="noopener noreferrer" className="text-[9px] font-bold text-rose-500 hover:underline">
                         이동 ↗
                       </a>
                     )}
@@ -1172,13 +1172,13 @@ CREATE POLICY "Allow public delete" ON public.memos FOR DELETE USING (true);`}
                       value={timeCapsuleUrl}
                       onChange={(e) => handleSaveUrl(e.target.value)}
                       placeholder="저서 링크를 입력해 주세요..."
-                      className="w-full bg-slate-50 border border-slate-200 focus:border-sky-300 outline-none rounded-lg px-2.5 py-1 text-[10px] text-slate-700 transition-all font-medium"
+                      className="w-full bg-slate-50 border border-slate-200 focus:border-rose-300 outline-none rounded-lg px-2.5 py-1 text-[10px] text-slate-700 transition-all font-medium"
                     />
                   ) : (
                     /* Read-only Book URL for other participants */
                     <div className="w-full bg-slate-50/50 border border-slate-100 text-[10px] text-slate-400 rounded-lg px-2.5 py-1 truncate font-medium">
                       {participant.timeCapsuleUrl ? (
-                        <a href={participant.timeCapsuleUrl.startsWith('http') ? participant.timeCapsuleUrl : `https://${participant.timeCapsuleUrl}`} target="_blank" rel="noopener noreferrer" className="hover:underline hover:text-sky-500">
+                        <a href={participant.timeCapsuleUrl.startsWith('http') ? participant.timeCapsuleUrl : `https://${participant.timeCapsuleUrl}`} target="_blank" rel="noopener noreferrer" className="hover:underline hover:text-rose-500">
                           {participant.timeCapsuleUrl}
                         </a>
                       ) : (
@@ -1191,7 +1191,7 @@ CREATE POLICY "Allow public delete" ON public.memos FOR DELETE USING (true);`}
                 {/* Overall Season Progress footer */}
                 <div className="mt-3 pt-3 border-t border-slate-100/80 flex justify-between items-center text-[9px] text-slate-400 font-bold">
                   <span>전체 시즌 달성률</span>
-                  <span className={participant.isCurrentUser ? 'text-sky-500' : 'text-slate-500'}>
+                  <span className={participant.isCurrentUser ? 'text-rose-500' : 'text-slate-500'}>
                     {overallCheckedCount}/{TOTAL_CHALLENGE_DAYS}일 ({overallPercentage}%)
                   </span>
                 </div>
@@ -1288,7 +1288,7 @@ CREATE POLICY "Allow public delete" ON public.memos FOR DELETE USING (true);`}
           <div style={{
             backgroundColor: '#ffffff',
             borderRadius: '28px',
-            border: '1px solid #e0f2fe',
+            border: '1px solid #ffe4e6',
             padding: '24px',
             maxWidth: '360px',
             width: '100%',
@@ -1302,13 +1302,13 @@ CREATE POLICY "Allow public delete" ON public.memos FOR DELETE USING (true);`}
               width: '48px',
               height: '48px',
               borderRadius: '9999px',
-              backgroundColor: '#e0f2fe',
+              backgroundColor: '#ffe4e6',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               marginBottom: '16px'
             }}>
-              <AlertCircle className="w-6 h-6 text-sky-500" />
+              <AlertCircle className="w-6 h-6 text-rose-500" />
             </div>
             
             <h3 style={{
@@ -1328,13 +1328,13 @@ CREATE POLICY "Allow public delete" ON public.memos FOR DELETE USING (true);`}
             </p>
             
             <div style={{
-              backgroundColor: '#f0f9ff',
-              border: '1px solid rgba(14, 165, 233, 0.1)',
+              backgroundColor: '#fff1f2',
+              border: '1px solid rgba(244, 63, 94, 0.1)',
               borderRadius: '16px',
               padding: '16px',
               width: '100%',
               fontSize: '11px',
-              color: '#0369a1',
+              color: '#9f1239',
               fontWeight: 'bold',
               marginBottom: '24px',
               textAlign: 'left',
@@ -1345,7 +1345,7 @@ CREATE POLICY "Allow public delete" ON public.memos FOR DELETE USING (true);`}
                   width: '18px',
                   height: '18px',
                   borderRadius: '9999px',
-                  backgroundColor: '#0ea5e9',
+                  backgroundColor: '#f43f5e',
                   color: '#ffffff',
                   display: 'flex',
                   alignItems: 'center',
@@ -1354,14 +1354,14 @@ CREATE POLICY "Allow public delete" ON public.memos FOR DELETE USING (true);`}
                   flexShrink: 0,
                   fontWeight: 900
                 }}>1</span>
-                <span>화면 우측 상단(또는 하단)의 <strong style={{ color: '#0284c7' }}>더보기(…)</strong> 또는 메뉴를 누릅니다.</span>
+                <span>화면 우측 상단(또는 하단)의 <strong style={{ color: '#be123c' }}>더보기(…)</strong> 또는 메뉴를 누릅니다.</span>
               </p>
               <p style={{ display: 'flex', alignItems: 'start', gap: '6px' }}>
                 <span style={{
                   width: '18px',
                   height: '18px',
                   borderRadius: '9999px',
-                  backgroundColor: '#0ea5e9',
+                  backgroundColor: '#f43f5e',
                   color: '#ffffff',
                   display: 'flex',
                   alignItems: 'center',
@@ -1370,7 +1370,7 @@ CREATE POLICY "Allow public delete" ON public.memos FOR DELETE USING (true);`}
                   flexShrink: 0,
                   fontWeight: 900
                 }}>2</span>
-                <span><strong style={{ color: '#0284c7' }}>[기본 브라우저로 열기]</strong> 또는 <strong style={{ color: '#0284c7' }}>[크롬/Safari로 열기]</strong>를 누릅니다.</span>
+                <span><strong style={{ color: '#be123c' }}>[기본 브라우저로 열기]</strong> 또는 <strong style={{ color: '#be123c' }}>[크롬/Safari로 열기]</strong>를 누릅니다.</span>
               </p>
             </div>
 
@@ -1382,7 +1382,7 @@ CREATE POLICY "Allow public delete" ON public.memos FOR DELETE USING (true);`}
               }}
               style={{
                 width: '100%',
-                backgroundColor: '#0ea5e9',
+                backgroundColor: '#f43f5e',
                 color: '#ffffff',
                 fontWeight: 'bold',
                 padding: '14px 0',
@@ -1390,7 +1390,7 @@ CREATE POLICY "Allow public delete" ON public.memos FOR DELETE USING (true);`}
                 fontSize: '13px',
                 border: 'none',
                 cursor: 'pointer',
-                boxShadow: '0 10px 15px -3px rgba(14, 165, 233, 0.3)',
+                boxShadow: '0 10px 15px -3px rgba(244, 63, 94, 0.3)',
                 transition: 'background-color 0.2s'
               }}
             >

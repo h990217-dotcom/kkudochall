@@ -1,29 +1,29 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f0f6fc;
-  --foreground: #0f172a;
+  --background: #fff1f2; /* rose-50 */
+  --foreground: #4c0519; /* rose-950 */
   --card: rgba(255, 255, 255, 0.85);
-  --card-border: rgba(14, 165, 233, 0.15); /* sky-500/15 */
-  --primary: #0ea5e9; /* sky-500 */
+  --card-border: rgba(244, 63, 94, 0.12); /* rose-500/12 */
+  --primary: #f43f5e; /* rose-500 */
   --primary-foreground: #ffffff;
-  --accent: #f0f9ff;
-  --border: #e2e8f0;
-  --muted: #475569;
-  --shadow: 0 20px 40px -15px rgba(14, 165, 233, 0.08), 0 1px 3px rgba(0, 0, 0, 0.01);
+  --accent: #fff1f2;
+  --border: #ffe4e6;
+  --muted: #9f1239; /* rose-800 */
+  --shadow: 0 20px 40px -15px rgba(244, 63, 94, 0.08), 0 1px 3px rgba(0, 0, 0, 0.01);
 }
 
 .dark {
-  --background: #090d16;
-  --foreground: #f1f5f9;
-  --card: rgba(15, 23, 42, 0.8);
-  --card-border: rgba(56, 189, 248, 0.1);
-  --primary: #38bdf8; /* sky-400 */
-  --primary-foreground: #090d16;
-  --accent: #0c4a6e;
-  --border: #1e293b;
-  --muted: #94a3b8;
-  --shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.4);
+  --background: #1c0a10; /* deep dark rose-purple */
+  --foreground: #ffe4e6;
+  --card: rgba(43, 15, 24, 0.8);
+  --card-border: rgba(244, 63, 94, 0.15);
+  --primary: #fb7185; /* rose-400 */
+  --primary-foreground: #1c0a10;
+  --accent: #4c0519;
+  --border: #881337;
+  --muted: #fda4af;
+  --shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
 }
 
 body {
@@ -33,12 +33,12 @@ body {
   min-height: 100vh;
   transition: background-color 0.4s ease, color 0.4s ease;
   background-image: 
-    linear-gradient(135deg, #ffffff 0%, #e0f2fe 50%, #bae6fd 100%);
+    linear-gradient(135deg, #ffffff 0%, #fff1f2 40%, #fbcfe8 100%);
 }
 
 .dark body {
   background-image: 
-    linear-gradient(135deg, #090d16 0%, #0c1e35 50%, #030712 100__);
+    linear-gradient(135deg, #1c0a10 0%, #31101b 50%, #0f0408 100%);
 }
 
 /* Sophisticated card design with backdrop filter */
@@ -51,9 +51,9 @@ body {
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, border-color 0.4s ease;
 }
 
-.glow-sky {
-  box-shadow: 0 0 25px rgba(14, 165, 233, 0.12), 0 20px 40px -15px rgba(14, 165, 233, 0.08);
+.glow-rose {
+  box-shadow: 0 0 25px rgba(244, 63, 94, 0.12), 0 20px 40px -15px rgba(244, 63, 94, 0.08);
 }
-.dark .glow-sky {
-  box-shadow: 0 0 25px rgba(56, 189, 248, 0.15), 0 20px 40px -15px rgba(0, 0, 0, 0.4);
+.dark .glow-rose {
+  box-shadow: 0 0 25px rgba(251, 113, 133, 0.15), 0 20px 40px -15px rgba(0, 0, 0, 0.4);
 }
